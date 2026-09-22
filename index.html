@@ -1,0 +1,710 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>CANTENEX — Editorial College Canteen Pre-Order</title>
+  <meta name="description" content="Pre-order freshly prepared campus meals with zero queue wait. Premium editorial canteen dining experience for college students and faculty.">
+
+  <!-- Google Fonts: Syne (Display), Cormorant Garamond (Editorial Accent), Plus Jakarta Sans (UI) -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@1,400;1,600;1,700&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=Syne:wght@700;800&display=swap" rel="stylesheet">
+
+  <!-- Core & Responsive Stylesheets -->
+  <link rel="stylesheet" href="css/style.css">
+  <link rel="stylesheet" href="css/responsive.css">
+</head>
+<body>
+
+  <!-- ========================================================================
+       TOP NAVIGATION BAR
+       ======================================================================== -->
+  <header id="site-header" class="site-header">
+    <div class="container nav-container">
+      <a href="#hero" class="brand-logo" id="nav-brand-logo">
+        <span class="brand-title">CANTENEX</span>
+        <span class="brand-badge">CAMPUS DINING</span>
+      </a>
+
+      <nav class="student-view">
+        <ul class="nav-links">
+          <li><a href="#special" class="nav-link">Today's Special</a></li>
+          <li><a href="#menu" class="nav-link">Menu Catalogue</a></li>
+          <li><a href="#process" class="nav-link">How It Works</a></li>
+          <li><a href="#tracking" class="nav-link">Track Order</a></li>
+        </ul>
+      </nav>
+
+      <div class="nav-actions">
+        <!-- Audio / SFX Toggle Button -->
+        <button id="btn-toggle-sound" class="btn-admin-switch" title="Toggle Sound FX & Speech Announcements" style="border-color: rgba(74, 222, 128, 0.4); color: #4ADE80;">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5"/><path d="M15.54 8.46a5 5 0 0 1 0 7.07"/><path d="M19.07 4.93a10 10 0 0 1 0 14.14"/></svg>
+          <span id="sound-toggle-label">Audio: ON</span>
+        </button>
+
+
+        <!-- Kitchen Admin Toggle -->
+        <button id="btn-toggle-admin" class="btn-admin-switch" title="Access Staff Kitchen Board">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M22 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
+          <span>Kitchen Staff</span>
+        </button>
+
+        <!-- Cart Trigger -->
+        <button id="btn-open-cart" class="btn-icon-counter student-view" aria-label="Open Food Tray">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 2 3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4Z"/><path d="M3 6h18"/><path d="M16 10a4 4 0 0 1-8 0"/></svg>
+          <span>Tray</span>
+          <span id="cart-badge-count" class="badge-cart-count">0</span>
+        </button>
+      </div>
+    </div>
+  </header>
+
+  <!-- ========================================================================
+       STUDENT VIEW LANDING PAGE SECTIONS
+       ======================================================================== -->
+  <main>
+    
+    <!-- HERO SECTION: ASYMMETRIC DARK EDITORIAL -->
+    <section id="hero" class="hero-section student-view">
+      <div class="hero-ambient-glow"></div>
+      
+      <div class="container hero-grid">
+        <!-- Editorial Typography & Brand Pitch -->
+        <div class="hero-content-col">
+          <div class="hero-meta-label editorial-tag">
+            <span class="live-pulse-dot"></span>
+            <span>Central Campus Kitchen • Live Express Pre-Order</span>
+          </div>
+
+          <h1 class="hero-main-title">
+            GOOD FOOD.<br>
+            <span class="hero-title-accent">ZERO WAIT.</span>
+          </h1>
+
+          <p class="hero-serif-sub">
+            Your break. Your bite. Pre-order freshly crafted meals and pick up hot at your class break.
+          </p>
+
+          <div class="hero-action-row">
+            <a href="#menu" class="btn-primary-editorial">
+              <span>Explore Menu</span>
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14"/><path d="m12 5 7 7-7 7"/></svg>
+            </a>
+            <a href="#tracking" class="btn-secondary-editorial">
+              <span>Track Live Token</span>
+            </a>
+          </div>
+        </div>
+
+        <!-- 3D Interactive Food Visual Stage -->
+        <div id="hero-3d-stage" class="hero-visual-stage">
+          <div class="hero-food-canvas-wrapper">
+            <!-- 3D Food Plate Object -->
+            <div id="hero-food-plate" class="hero-food-plate">
+              <img src="https://images.unsplash.com/photo-1563379091339-03b21ab4a4f8?auto=format&fit=crop&w=1200&q=85" alt="Malabar Chicken Dum Biryani" id="hero-main-dish-img">
+              <div id="hero-light-glow" class="hero-light-glare"></div>
+            </div>
+
+            <!-- Layered Depth Floating Badges -->
+            <div class="hero-depth-layer badge-prep-live" data-depth="0.7">
+              <span class="live-pulse-dot"></span>
+              <div>
+                <div style="font-size: 0.72rem; font-weight: 800; letter-spacing: 0.1em; text-transform: uppercase; color: var(--color-ochre);">LIVE PREP QUEUE</div>
+                <div id="live-queue-count" style="font-family: var(--font-display); font-size: 0.95rem; font-weight: 700; color: #fff;">4 Active Orders</div>
+              </div>
+            </div>
+
+            <div class="hero-depth-layer badge-chef-card" data-depth="1.1">
+              <div class="title">Dum Chicken Biryani</div>
+              <div class="meta">⭐ 5.0 • Fresh Dum Batch in 7 mins</div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Hero Bottom Bar / Canteen Live Ticker -->
+      <div class="container hero-bottom-bar">
+        <div class="ticker-item">
+          <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+          <span>Current Counter Slot: <strong>01:15 PM (Lunch Break)</strong></span>
+        </div>
+        <div class="ticker-item">
+          <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg>
+          <span>Express Lane Verification: <strong>Instant QR Token Scan</strong></span>
+        </div>
+        <div class="ticker-item">
+          <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M6 2 3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4Z"/><line x1="3" x2="21" y1="6" y2="6"/></svg>
+          <span>Kitchen Status: <strong>Open & Steaming</strong></span>
+        </div>
+      </div>
+    </section>
+
+    <!-- TODAY'S SPECIAL: TERRACOTTA EDITORIAL SPOTLIGHT -->
+    <section id="special" class="section-special student-view">
+      <div class="container special-grid">
+        <!-- Giant Image Stage -->
+        <div class="special-image-stage">
+          <div class="img-wrapper">
+            <img src="https://images.unsplash.com/photo-1563379091339-03b21ab4a4f8?auto=format&fit=crop&w=1200&q=85" alt="Chef's Special Chicken Dum Biryani" loading="lazy">
+            <span class="special-badge-overlay">Chef's Handcrafted Special</span>
+          </div>
+        </div>
+
+        <!-- Editorial Info -->
+        <div class="special-content-stage">
+          <span class="special-index-label">TODAY'S SIGNATURE RECIPE / 04</span>
+          
+          <h2 class="special-dish-title">
+            MALABAR CHICKEN<br>
+            DUM BIRYANI
+          </h2>
+
+          <p class="special-description">
+            Fragrant short-grain Kaima rice slow-cooked on charcoal dum with tender marinated chicken, crushed roasted Malabar spices, accompanied by fresh mint onion raita, spicy shallot pickle, and boiled farm egg.
+          </p>
+
+          <div class="special-specs-row">
+            <div class="spec-item">
+              <span class="label">Prep Speed</span>
+              <span class="value">7 Mins</span>
+            </div>
+            <div class="spec-item">
+              <span class="label">Spice Heat</span>
+              <span class="value">Medium-High</span>
+            </div>
+            <div class="spec-item">
+              <span class="label">Portion</span>
+              <span class="value">Single Feast</span>
+            </div>
+          </div>
+
+          <div class="special-footer-action">
+            <div class="price-display-huge">
+              <span>₹</span>130
+            </div>
+            <button id="btn-special-add-tray" class="btn-primary-editorial">
+              <span>Add To Tray</span>
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M5 12h14"/><path d="m12 5 7 7-7 7"/></svg>
+            </button>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- MENU CATALOGUE: WARM CREAM EDITORIAL -->
+    <section id="menu" class="section-menu student-view">
+      <div class="container">
+        <!-- Menu Header -->
+        <div class="menu-header-block">
+          <div class="menu-top-row">
+            <div>
+              <span class="editorial-tag" style="color: var(--color-terracotta); margin-bottom: 0.5rem;">Campus Dining Catalogue</span>
+              <h2 class="menu-section-title">THE DAILY <span>REFRESHMENT</span> MENU</h2>
+            </div>
+            <div class="menu-search-wrapper">
+              <svg class="menu-search-icon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.3-4.3"/></svg>
+              <input type="text" id="menu-search" class="menu-search-input" placeholder="Search dosa, biryani, coffee...">
+            </div>
+          </div>
+
+          <!-- Category Filter Tabs -->
+          <div class="filter-bar-container">
+            <div class="category-tabs">
+              <button class="tab-pill active" data-category="ALL">All Items</button>
+              <button class="tab-pill" data-category="BREAKFAST">Morning Tiffin</button>
+              <button class="tab-pill" data-category="MEALS">Lunch & Bowls</button>
+              <button class="tab-pill" data-category="SNACKS">Quick Bites</button>
+              <button class="tab-pill" data-category="DRINKS">Brews & Coolers</button>
+              <button class="tab-pill" data-category="DESSERTS">Sweet Finishes</button>
+            </div>
+            <div style="font-size: 0.78rem; font-weight: 700; color: var(--text-dark-secondary);">
+              🟢 Pure Veg &nbsp; 🔴 Non-Veg
+            </div>
+          </div>
+        </div>
+
+        <!-- Alternating Editorial Menu Items Grid -->
+        <div id="menu-items-grid" class="menu-editorial-grid">
+          <!-- Populated dynamically by app.js -->
+        </div>
+      </div>
+    </section>
+
+    <!-- HOW IT WORKS: OLIVE EDITORIAL NUMBERED COMPOSITION -->
+    <section id="process" class="section-process student-view">
+      <div class="container">
+        <div class="process-header">
+          <span class="editorial-tag" style="color: var(--color-ochre); margin-bottom: 0.5rem;">Canteen Experience</span>
+          <h2 style="font-family: var(--font-display); font-size: clamp(2.4rem, 5vw, 4.2rem); font-weight: 800; text-transform: uppercase; line-height: 0.95;">
+            THREE STEPS.<br>
+            <span style="font-family: var(--font-serif); font-style: italic; color: var(--color-ochre); font-weight: 400; text-transform: none;">Zero lunch break queues.</span>
+          </h2>
+        </div>
+
+        <div class="process-grid">
+          <!-- Step 01 -->
+          <div class="process-card">
+            <div class="process-giant-num">01</div>
+            <h3 class="process-card-title">CURATE & PRE-ORDER</h3>
+            <p class="process-card-desc">
+              Browse today’s fresh kitchen preparations from your mobile or laptop during class or in the hostel. Add your favorite refreshments to your tray.
+            </p>
+          </div>
+
+          <!-- Step 02 -->
+          <div class="process-card">
+            <div class="process-giant-num">02</div>
+            <h3 class="process-card-title">SELECT BREAK SLOT</h3>
+            <p class="process-card-desc">
+              Pick your exact break slot — 11:15 AM short break, 01:15 PM lunch hour, or 03:45 PM evening tea. Your food is scheduled right on time.
+            </p>
+          </div>
+
+          <!-- Step 03 -->
+          <div class="process-card">
+            <div class="process-giant-num">03</div>
+            <h3 class="process-card-title">SCAN & PICK UP</h3>
+            <p class="process-card-desc">
+              Walk up straight to your designated Express Counter. Flash your dynamic digital QR token, collect your steaming meal, and enjoy.
+            </p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- LIVE ORDER TRACKING SECTION -->
+    <section id="tracking" class="section-tracking student-view">
+      <div class="container">
+        <div style="text-align: center; margin-bottom: 2.5rem;">
+          <span class="editorial-tag" style="color: var(--color-ochre); margin-bottom: 0.5rem;">Real-time Kitchen Timeline</span>
+          <h2 style="font-family: var(--font-display); font-size: clamp(2.2rem, 4.5vw, 3.6rem); font-weight: 800; text-transform: uppercase;">
+            TRACK YOUR PRE-ORDER
+          </h2>
+          
+          <!-- Token Search / Switcher -->
+          <div style="margin-top: 1.25rem; display: flex; align-items: center; justify-content: center; gap: 0.6rem; flex-wrap: wrap;">
+            <input type="text" id="tracking-search-input" placeholder="Enter Token ID (e.g. CX-1021)" style="padding: 0.65rem 1.1rem; background: #18181F; border: 1px solid rgba(255,255,255,0.15); border-radius: 9999px; color: #fff; font-size: 0.85rem; width: 260px; text-transform: uppercase;">
+            <button id="btn-search-token" class="btn-primary-editorial" style="padding: 0.65rem 1.4rem; font-size: 0.78rem;">
+              <span>Track Token</span>
+            </button>
+          </div>
+        </div>
+
+        <div class="tracking-card-container" id="tracking-card-body">
+          <!-- Populated dynamically by app.js -->
+        </div>
+      </div>
+    </section>
+
+  </main>
+
+  <!-- ========================================================================
+       ADMIN & KITCHEN STAFF DASHBOARD (Full-Page Mode)
+       ======================================================================== -->
+  <section id="admin-view" class="admin-view-container">
+    <div class="container">
+      <div class="admin-top-header">
+        <div>
+          <span class="editorial-tag" style="color: var(--color-terracotta);">Kitchen Operations Portal</span>
+          <h1 style="font-family: var(--font-display); font-size: 2.5rem; font-weight: 800; text-transform: uppercase;">Central Kitchen Queue</h1>
+        </div>
+        <div style="display: flex; gap: 0.75rem; align-items: center;">
+          <button id="btn-open-kiosk" class="btn-primary-editorial" style="background: #202028; border: 1px solid rgba(255,255,255,0.2); font-size: 0.8rem; padding: 0.6rem 1.1rem;">
+            <span>📺 Canteen TV Board</span>
+          </button>
+          <button id="btn-admin-back" class="btn-secondary-editorial">
+            <span>← Return to Student View</span>
+          </button>
+        </div>
+      </div>
+
+      <!-- Metrics Row (Derived Strictly from Current Real Data) -->
+      <div class="admin-metrics-row">
+        <div class="metric-card">
+          <span class="label">Today's Revenue</span>
+          <div class="num" id="admin-metric-rev">₹0</div>
+        </div>
+        <div class="metric-card">
+          <span class="label">Total Orders</span>
+          <div class="num" id="admin-metric-total">0</div>
+        </div>
+        <div class="metric-card">
+          <span class="label">Currently Cooking</span>
+          <div class="num" id="admin-metric-prep" style="color: #FB923C;">0</div>
+        </div>
+        <div class="metric-card">
+          <span class="label">Ready for Pickup</span>
+          <div class="num" id="admin-metric-ready" style="color: #4ADE80;">0</div>
+        </div>
+      </div>
+
+      <!-- Live Orders Table -->
+      <div class="kitchen-orders-table-wrapper">
+        <div class="table-header-title">
+          <span>Live Incoming Orders & Kitchen Dispatch</span>
+          <span style="font-size: 0.8rem; font-weight: 600; color: var(--text-light-muted);">1-Click Kitchen Status Progression</span>
+        </div>
+        <table class="admin-table">
+          <thead>
+            <tr>
+              <th>Token ID</th>
+              <th>Student Details</th>
+              <th>Ordered Items</th>
+              <th>Pickup Slot</th>
+              <th>Amount</th>
+              <th>Status</th>
+              <th>Kitchen Action</th>
+            </tr>
+          </thead>
+          <tbody id="admin-orders-tbody">
+            <!-- Populated dynamically -->
+          </tbody>
+        </table>
+      </div>
+
+      <!-- Menu Inventory Controls -->
+      <div class="kitchen-orders-table-wrapper">
+        <div class="table-header-title">
+          <span>Menu Inventory & Live Stock Controller</span>
+          <span style="font-size: 0.8rem; font-weight: 600; color: var(--text-light-muted);">Instant In-Stock / Sold-Out Switch</span>
+        </div>
+        <table class="admin-table">
+          <thead>
+            <tr>
+              <th>Code</th>
+              <th>Item Name & Category</th>
+              <th>Price (₹)</th>
+              <th>Stock Status</th>
+            </tr>
+          </thead>
+          <tbody id="admin-menu-tbody">
+            <!-- Populated dynamically -->
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </section>
+
+  <!-- ========================================================================
+       SLIDE-OUT FOOD TRAY (CART DRAWER)
+       ======================================================================== -->
+  <div id="cart-overlay" class="cart-drawer-overlay">
+    <aside class="cart-drawer" aria-label="Selected Meal Tray">
+      <div class="cart-drawer-header">
+        <div class="cart-drawer-title">YOUR PRE-ORDER TRAY</div>
+        <button id="btn-close-cart" class="btn-close-drawer" aria-label="Close Tray">
+          <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+        </button>
+      </div>
+
+      <!-- Items List -->
+      <div id="cart-items-list" class="cart-items-scroll">
+        <!-- Populated dynamically -->
+      </div>
+
+      <!-- Slot Picker inside Tray -->
+      <div class="cart-slot-picker">
+        <label for="cart-slot-select">Campus Pickup Break Slot</label>
+        <select id="cart-slot-select" class="slot-select-custom">
+          <!-- Populated dynamically -->
+        </select>
+      </div>
+
+      <!-- Summary & Checkout Trigger -->
+      <div class="cart-drawer-footer">
+        <div class="cart-summary-row">
+          <span>Item Subtotal</span>
+          <span id="cart-subtotal-val">₹0</span>
+        </div>
+        <div class="cart-summary-row">
+          <span>Campus Token & GST</span>
+          <span style="color: var(--color-green-veg);">Included</span>
+        </div>
+        <div class="cart-summary-row total">
+          <span>Total To Pay</span>
+          <span id="cart-total-val">₹0</span>
+        </div>
+
+        <button id="btn-cart-checkout" class="btn-checkout-proceed">
+          <span>Proceed To Express Checkout</span>
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M5 12h14"/><path d="m12 5 7 7-7 7"/></svg>
+        </button>
+      </div>
+    </aside>
+  </div>
+
+  <!-- ========================================================================
+       SPLIT-SCREEN STUDENT CHECKOUT MODAL
+       ======================================================================== -->
+  <div id="checkout-modal" class="modal-backdrop">
+    <div class="checkout-modal-content">
+      <div class="checkout-grid">
+        <!-- Form Side -->
+        <div class="checkout-form-side">
+          <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 1.5rem;">
+            <h3 style="font-family: var(--font-display); font-size: 1.35rem; font-weight: 800; text-transform: uppercase; color: #fff;">Student Verification</h3>
+            <button id="btn-close-checkout" style="color: var(--text-light-secondary); padding: 0.2rem;">✕</button>
+          </div>
+
+          <!-- Quick Student Profile Presets -->
+          <div style="margin-bottom: 1.25rem;">
+            <div style="font-size: 0.68rem; font-weight: 700; letter-spacing: 0.1em; text-transform: uppercase; color: var(--color-ochre); margin-bottom: 0.4rem;">Quick Student Profile Presets</div>
+            <div style="display: flex; gap: 0.4rem; flex-wrap: wrap;">
+              <button class="student-quick-btn active" data-name="Aravind Swaminathan" data-reg="22BCS142" data-dept="Computer Science & Engineering">Aravind (CSE)</button>
+              <button class="student-quick-btn" data-name="Sneha Rangarajan" data-reg="23BIT089" data-dept="Information Technology">Sneha (IT)</button>
+              <button class="student-quick-btn" data-name="Rohan Deshmukh" data-reg="21BME205" data-dept="Mechanical Engineering">Rohan (Mech)</button>
+              <button class="student-quick-btn" data-name="Kavya Sree" data-reg="24BAI017" data-dept="Artificial Intelligence & DS">Kavya (AI)</button>
+            </div>
+          </div>
+
+          <div class="form-group">
+            <label for="checkout-name">Student Full Name</label>
+            <input type="text" id="checkout-name" class="form-control" placeholder="e.g. Aravind Swaminathan" required>
+          </div>
+
+          <div class="form-group">
+            <label for="checkout-regno">College Roll / Reg Number</label>
+            <input type="text" id="checkout-regno" class="form-control" placeholder="e.g. 22BCS142" required>
+          </div>
+
+          <div class="form-group">
+            <label for="checkout-dept">Academic Department</label>
+            <select id="checkout-dept" class="form-control">
+              <!-- Populated dynamically -->
+            </select>
+          </div>
+
+          <div class="form-group">
+            <label>Payment Method</label>
+            <div class="payment-options-row">
+              <div class="payment-card-select selected" data-method="upi">
+                <div class="p-title">📱 UPI Demo Scan</div>
+                <div class="p-desc">Simulated Instant QR</div>
+              </div>
+              <div class="payment-card-select" data-method="cash">
+                <div class="p-title">💵 Cash at Counter</div>
+                <div class="p-desc">Pay upon pickup</div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Summary Side -->
+        <div class="checkout-summary-side">
+          <h4 style="font-family: var(--font-display); font-size: 1.1rem; font-weight: 700; text-transform: uppercase; margin-bottom: 1.25rem; color: #fff;">Order Summary</h4>
+          
+          <div style="background: #121216; padding: 0.75rem 1rem; border-radius: 6px; margin-bottom: 1rem;">
+            <div style="font-size: 0.7rem; font-weight: 700; color: var(--color-ochre); text-transform: uppercase;">Scheduled Pickup Slot</div>
+            <div id="checkout-slot-display" style="font-size: 0.9rem; font-weight: 700; color: #fff; margin-top: 0.2rem;">01:15 PM — Lunch Break</div>
+          </div>
+
+          <div id="checkout-summary-items" style="max-height: 180px; overflow-y: auto; margin-bottom: 1.25rem;">
+            <!-- Populated dynamically -->
+          </div>
+
+          <div style="border-top: 1px solid rgba(255, 255, 255, 0.1); padding-top: 0.85rem; display: flex; justify-content: space-between; align-items: center; margin-bottom: 1.5rem;">
+            <span style="font-size: 0.9rem; color: var(--text-light-secondary);">Total Payable</span>
+            <span id="checkout-total-display" style="font-family: var(--font-display); font-size: 1.6rem; font-weight: 800; color: #fff;">₹0</span>
+          </div>
+
+          <button id="btn-confirm-order" class="btn-primary-editorial" style="width: 100%;">
+            <span>Generate Token & Place Order</span>
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ========================================================================
+       CINEMATIC ORDER CONFIRMATION MODAL
+       ======================================================================== -->
+  <div id="order-confirmed-modal" class="modal-backdrop">
+    <div class="confirmation-card">
+      <div style="width: 54px; height: 54px; border-radius: 50%; background: rgba(34, 197, 94, 0.18); color: var(--color-green-veg); display: flex; align-items: center; justify-content: center; margin: 0 auto 1rem; font-size: 1.5rem; font-weight: 800;">✓</div>
+      
+      <span class="editorial-tag" style="color: var(--color-ochre);">Order Transmitted To Kitchen</span>
+      <h3 style="font-family: var(--font-display); font-size: 1.8rem; font-weight: 800; text-transform: uppercase; color: #fff; margin-top: 0.4rem;">PRE-ORDER CONFIRMED</h3>
+      
+      <div class="confirm-huge-token" id="confirm-token-id">CX-1025</div>
+      <p style="font-size: 0.85rem; color: var(--text-light-secondary);">Show this digital token or QR code at your pickup counter</p>
+
+      <div style="margin: 1.5rem auto; background: #fff; padding: 1rem; border-radius: 8px; width: fit-content;" id="confirm-qr-container">
+        <!-- QR Code SVG injected dynamically -->
+      </div>
+
+      <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; text-align: left; background: #181820; padding: 1rem; border-radius: 8px; margin-bottom: 1.25rem;">
+        <div>
+          <div style="font-size: 0.68rem; font-weight: 700; color: var(--text-light-muted); text-transform: uppercase;">Express Counter</div>
+          <div id="confirm-counter-no" style="font-size: 0.85rem; font-weight: 700; color: #fff; margin-top: 0.15rem;">Counter 2</div>
+        </div>
+        <div>
+          <div style="font-size: 0.68rem; font-weight: 700; color: var(--text-light-muted); text-transform: uppercase;">Pickup Slot</div>
+          <div id="confirm-slot-time" style="font-size: 0.85rem; font-weight: 700; color: #fff; margin-top: 0.15rem;">01:15 PM</div>
+        </div>
+      </div>
+
+      <div style="display: flex; gap: 0.75rem; flex-direction: column;">
+        <button id="btn-confirm-to-tracking" class="btn-primary-editorial" style="width: 100%;">
+          <span>Track Live Kitchen Progress →</span>
+        </button>
+        <button id="btn-print-token" class="btn-secondary-editorial" style="width: 100%; justify-content: center; font-size: 0.78rem;">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 6 2 18 2 18 9"/><path d="M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2"/><rect width="12" height="8" x="6" y="14"/></svg>
+          <span>Print / Save Token Receipt</span>
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ========================================================================
+       DISH SPOTLIGHT & NUTRITION MODAL
+       ======================================================================== -->
+  <div id="dish-modal" class="modal-backdrop">
+    <div class="dish-spotlight-modal" id="dish-spotlight-body">
+      <!-- Populated dynamically -->
+    </div>
+  </div>
+
+  <!-- ========================================================================
+       SIMULATED UPI PAYMENT QR MODAL
+       ======================================================================== -->
+  <div id="upi-modal" class="modal-backdrop">
+    <div style="background: #14141A; border: 1px solid rgba(255,255,255,0.15); border-radius: 16px; padding: 2rem; max-width: 440px; width: 100%; text-align: center; box-shadow: 0 35px 80px rgba(0,0,0,0.9);">
+      <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1rem;">
+        <span class="editorial-tag" style="color: var(--color-ochre);">Campus UPI Simulator</span>
+        <button id="btn-close-upi" style="color: #fff; font-size: 1.1rem;">✕</button>
+      </div>
+      
+      <h3 style="font-family: var(--font-display); font-size: 1.4rem; font-weight: 800; color: #fff;">SCAN TO PAY</h3>
+      <p style="font-size: 0.8rem; color: var(--text-light-secondary); margin-top: 0.2rem;">Accepts Google Pay, PhonePe, Paytm, BHIM</p>
+
+      <div style="background: #fff; padding: 1.25rem; border-radius: 12px; margin: 1.25rem auto; width: fit-content;" id="upi-qr-box">
+        <!-- QR injected -->
+      </div>
+
+      <div style="font-family: var(--font-display); font-size: 1.8rem; font-weight: 800; color: #fff;" id="upi-modal-amount">₹165</div>
+      <div style="font-size: 0.75rem; color: #4ADE80; margin: 0.5rem 0 1.25rem;">● Simulating Instant Campus Merchant Verification...</div>
+
+      <button id="btn-simulate-upi-success" class="btn-primary-editorial" style="width: 100%;">
+        <span>Approve Simulated Payment (₹)</span>
+      </button>
+    </div>
+  </div>
+
+  <!-- Hidden Container for Printable Receipt -->
+  <div id="printable-receipt" style="display: none;"></div>
+
+  <!-- ========================================================================
+       LEGAL & POLICY MODALS
+       ======================================================================== -->
+  <div id="terms-modal" class="modal-backdrop">
+    <div style="background: #141418; border: 1px solid rgba(255,255,255,0.15); border-radius: 12px; padding: 2.5rem; max-width: 600px; max-height: 80vh; overflow-y: auto; color: var(--text-light-secondary);">
+      <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1.5rem;">
+        <h3 style="font-family: var(--font-display); font-size: 1.4rem; font-weight: 800; color: #fff; text-transform: uppercase;">Campus Canteen Terms</h3>
+        <button id="btn-close-terms" style="color: #fff;">✕</button>
+      </div>
+      <p style="font-size: 0.9rem; line-height: 1.7; margin-bottom: 1rem;">1. <strong>Zero-Queue Verification:</strong> All pre-orders must be claimed within 15 minutes of the selected break slot using the digital QR token.</p>
+      <p style="font-size: 0.9rem; line-height: 1.7; margin-bottom: 1rem;">2. <strong>Freshness Guarantee:</strong> Items are prepared hot according to your scheduled slot. Uncollected orders after 30 minutes may be cleared to maintain kitchen hygiene.</p>
+      <p style="font-size: 0.9rem; line-height: 1.7;">3. <strong>Modifications:</strong> You may cancel or amend an order before the kitchen status transitions to 'PREPARING'.</p>
+    </div>
+  </div>
+
+  <div id="privacy-modal" class="modal-backdrop">
+    <div style="background: #141418; border: 1px solid rgba(255,255,255,0.15); border-radius: 12px; padding: 2.5rem; max-width: 600px; max-height: 80vh; overflow-y: auto; color: var(--text-light-secondary);">
+      <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1.5rem;">
+        <h3 style="font-family: var(--font-display); font-size: 1.4rem; font-weight: 800; color: #fff; text-transform: uppercase;">Student Data & Privacy</h3>
+        <button id="btn-close-privacy" style="color: #fff;">✕</button>
+      </div>
+      <p style="font-size: 0.9rem; line-height: 1.7; margin-bottom: 1rem;">1. <strong>Student Information:</strong> Your Name, Register Number, and Department are collected solely for counter dispatch and identity verification.</p>
+      <p style="font-size: 0.9rem; line-height: 1.7;">2. <strong>Local Persistence:</strong> All demo transaction tokens and tray selections are securely stored in your local campus browser session.</p>
+    </div>
+  </div>
+
+
+
+  <!-- ========================================================================
+       FULLSCREEN CANTEEN TV KIOSK / DISPATCH BOARD MODAL
+       ======================================================================== -->
+  <div id="kiosk-modal" class="kiosk-modal-backdrop">
+    <div class="kiosk-header">
+      <div>
+        <div style="font-size: 0.85rem; font-weight: 800; letter-spacing: 0.15em; color: var(--color-ochre); text-transform: uppercase;">CAMPUS KITCHEN DISPATCH MONITOR</div>
+        <h1 class="kiosk-title">LIVE ORDER CALLOUT BOARD</h1>
+      </div>
+      <button id="btn-close-kiosk" class="btn-secondary-editorial" style="font-size: 1rem; padding: 0.75rem 1.5rem;">
+        <span>✕ Exit TV Mode</span>
+      </button>
+    </div>
+
+    <div class="kiosk-grid">
+      <!-- Cooking Column -->
+      <div class="kiosk-column">
+        <h2 class="kiosk-column-title" style="color: #FB923C;">
+          <span class="live-pulse-dot" style="background: #FB923C; box-shadow: 0 0 10px #FB923C;"></span>
+          <span>🔥 Preparing in Kitchen</span>
+        </h2>
+        <div id="kiosk-cooking-grid" class="kiosk-token-grid">
+          <!-- Populated dynamically -->
+        </div>
+      </div>
+
+      <!-- Ready Column -->
+      <div class="kiosk-column" style="border-color: rgba(34, 197, 94, 0.35);">
+        <h2 class="kiosk-column-title" style="color: #4ADE80;">
+          <span class="live-pulse-dot" style="background: #4ADE80; box-shadow: 0 0 10px #4ADE80;"></span>
+          <span>✅ Ready For Pickup</span>
+        </h2>
+        <div id="kiosk-ready-grid" class="kiosk-token-grid">
+          <!-- Populated dynamically -->
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ========================================================================
+       MINIMAL EDITORIAL FOOTER
+       ======================================================================== -->
+  <footer class="site-footer student-view">
+    <div class="container">
+      <div class="footer-top-grid">
+        <div class="footer-brand-col">
+          <span class="brand-title">CANTENEX</span>
+          <div class="slogan">GOOD FOOD.<br>ZERO WAIT.</div>
+          <p style="font-size: 0.85rem; color: var(--text-light-muted); margin-top: 1rem; max-width: 320px;">
+            The next-generation campus dining and pre-order platform built for modern universities.
+          </p>
+        </div>
+
+        <div>
+          <h4 style="font-size: 0.75rem; font-weight: 800; letter-spacing: 0.12em; text-transform: uppercase; color: #fff; margin-bottom: 1.25rem;">Quick Navigation</h4>
+          <ul class="footer-links-list">
+            <li><a href="#hero">Campus Hero</a></li>
+            <li><a href="#special">Chef's Special</a></li>
+            <li><a href="#menu">Daily Catalogue</a></li>
+            <li><a href="#process">How It Operates</a></li>
+            <li><a href="#tracking">Live Order Stepper</a></li>
+          </ul>
+        </div>
+
+        <div>
+          <h4 style="font-size: 0.75rem; font-weight: 800; letter-spacing: 0.12em; text-transform: uppercase; color: #fff; margin-bottom: 1.25rem;">Campus Dining Desk</h4>
+          <ul class="footer-links-list">
+            <li><a href="#" id="link-terms">Canteen Terms & Conditions</a></li>
+            <li><a href="#" id="link-privacy">Student Privacy Policy</a></li>
+            <li><span style="font-size: 0.85rem; color: var(--text-light-muted);">Central Canteen Block, North Campus</span></li>
+            <li><span style="font-size: 0.85rem; color: var(--text-light-muted);">Hours: 08:00 AM – 06:30 PM</span></li>
+          </ul>
+        </div>
+      </div>
+
+      <div class="footer-bottom-bar">
+        <span>© 2026 CANTENEX — Web Essentials Mini Project</span>
+        <span>Crafted with Semantic HTML5, Pure CSS Design System & JavaScript</span>
+      </div>
+    </div>
+  </footer>
+
+  <!-- Application Entry Point -->
+  <script src="js/bundle.js"></script>
+</body>
+</html>
