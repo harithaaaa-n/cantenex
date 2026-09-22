@@ -312,7 +312,7 @@ export const INITIAL_MENU_ITEMS = [
 export const INITIAL_ORDERS = [
   {
     id: 'CX-1021',
-    studentName: 'Aravind Swaminathan',
+    studentName: 'Dinesh C',
     regNo: '22BCS142',
     department: 'Computer Science & Engineering',
     items: [
@@ -388,7 +388,7 @@ export const INITIAL_REVIEWS = [
   {
     id: 'rev-1',
     menuId: 'cx-04',
-    studentName: 'Aravind S. (CSE)',
+    studentName: 'Dinesh C. (CSE)',
     rating: 5,
     comment: 'The chicken dum biryani is incredible! Dum aroma is authentic and chicken pieces are super tender.',
     date: 'Today, 12:45 PM'

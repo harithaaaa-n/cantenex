@@ -69,7 +69,7 @@ CREATE TABLE IF NOT EXISTS order_items (
 
 -- Seed Sample Students
 INSERT OR IGNORE INTO students (reg_no, name, department) VALUES
-('22BCS142', 'Aravind Swaminathan', 'Computer Science & Engineering'),
+('22BCS142', 'Dinesh C', 'Computer Science & Engineering'),
 ('23BIT089', 'Sneha Rangarajan', 'Information Technology'),
 ('21BME205', 'Rohan Deshmukh', 'Mechanical Engineering'),
 ('24BAI017', 'Kavya Sree', 'Artificial Intelligence & DS');
@@ -106,7 +106,7 @@ CREATE TABLE IF NOT EXISTS dish_reviews (
 
 -- Seed Sample Orders
 INSERT OR REPLACE INTO orders (id, student_name, reg_no, department, total_amount, pickup_slot, pickup_type, payment_method, status, counter, placed_at, prep_progress) VALUES
-('CX-1021', 'Aravind Swaminathan', '22BCS142', 'Computer Science & Engineering', 165, '01:15 PM — Lunch Break', 'scheduled', 'UPI Demo (Verified)', 'READY', 'Counter 2 (Hot Express)', '12:48 PM', 90),
+('CX-1021', 'Dinesh C', '22BCS142', 'Computer Science & Engineering', 165, '01:15 PM — Lunch Break', 'scheduled', 'UPI Demo (Verified)', 'READY', 'Counter 2 (Hot Express)', '12:48 PM', 90),
 ('CX-1022', 'Sneha Rangarajan', '23BIT089', 'Information Technology', 180, '⚡ Ready in 10-12 Mins', 'immediate', 'Cash at Counter', 'PREPARING', 'Counter 1 (Tiffin & Dosa)', '01:02 PM', 55),
 ('CX-1023', 'Rohan Deshmukh', '21BME205', 'Mechanical Engineering', 145, '01:15 PM — Lunch Break', 'scheduled', 'UPI Demo (Verified)', 'ACCEPTED', 'Counter 3 (Special Gravy)', '01:08 PM', 25),
 ('CX-1024', 'Kavya Sree', '24BAI017', 'Artificial Intelligence & DS', 155, '03:45 PM — Evening Snack', 'scheduled', 'UPI Demo (Verified)', 'PLACED', 'Counter 2 (Hot Express)', '01:12 PM', 10);
@@ -124,7 +124,7 @@ INSERT INTO order_items (order_id, menu_id, item_name, price, quantity) VALUES
 
 -- Seed Sample Dish Reviews
 INSERT INTO dish_reviews (menu_id, student_name, rating, comment) VALUES
-('cx-04', 'Aravind S. (CSE)', 5, 'The chicken dum biryani is incredible! Dum aroma is authentic and chicken pieces are super tender.'),
+('cx-04', 'Dinesh C. (CSE)', 5, 'The chicken dum biryani is incredible! Dum aroma is authentic and chicken pieces are super tender.'),
 ('cx-01', 'Sneha R. (IT)', 5, 'Podi dosa is crisp to perfection. Love the fiery gunpowder spice and ginger chutney.'),
 ('cx-11', 'Rohan D. (Mech)', 5, 'Authentic degree filter coffee. Perfect frothy head in the brass dabarah!'),
 ('cx-15', 'Kavya S. (AI&DS)', 5, 'Warm walnut brownie with hot chocolate sauce is a lifesaver between continuous lectures.');

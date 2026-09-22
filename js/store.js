@@ -17,11 +17,20 @@ class Store {
     this.selectedSlot = this.load('cantenex_slot', PICKUP_SLOTS[0]);
     this.activeTrackingId = this.load('cantenex_active_tracking', this.orders[0]?.id || 'CX-1021');
     this.currentUser = this.load('cantenex_user', {
-      name: 'Aravind Swaminathan',
+      name: 'Dinesh C',
       regNo: '22BCS142',
       department: 'Computer Science & Engineering',
       role: 'student', // 'student' | 'admin'
     });
+    if (this.currentUser && this.currentUser.name === 'Aravind Swaminathan') {
+      this.currentUser.name = 'Dinesh C';
+      this.save('cantenex_user', this.currentUser);
+    }
+    // Update any cached orders referencing old name
+    this.orders.forEach(o => {
+      if (o.studentName === 'Aravind Swaminathan') o.studentName = 'Dinesh C';
+    });
+    this.save('cantenex_orders', this.orders);
 
     // Cross-tab sync support
     window.addEventListener('storage', (e) => {
@@ -339,7 +348,7 @@ class Store {
 
       if (lower.includes('from students')) {
         const rows = [
-          ['22BCS142', 'Aravind Swaminathan', 'Computer Science & Engineering', '2026-09-01 08:30:00'],
+          ['22BCS142', 'Dinesh C', 'Computer Science & Engineering', '2026-09-01 08:30:00'],
           ['23BIT089', 'Sneha Rangarajan', 'Information Technology', '2026-09-01 08:45:00'],
           ['21BME205', 'Rohan Deshmukh', 'Mechanical Engineering', '2026-09-01 09:15:00'],
           ['24BAI017', 'Kavya Sree', 'Artificial Intelligence & DS', '2026-09-01 10:00:00'],

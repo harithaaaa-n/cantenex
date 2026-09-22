@@ -43,6 +43,11 @@
           <span id="sound-toggle-label">Audio: ON</span>
         </button>
 
+        <!-- Database Studio Modal Trigger -->
+        <button id="btn-open-sqlite" class="btn-admin-switch" title="Open Database Studio & Query Inspector" style="border-color: rgba(212, 175, 55, 0.4); color: #E5C365;">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><ellipse cx="12" cy="5" rx="9" ry="3"/><path d="M21 12c0 1.66-4 3-9 3s-9-1.34-9-3"/><path d="M3 5v14c0 1.66 4 3 9 3s9-1.34 9-3V5"/></svg>
+          <span>Database Studio</span>
+        </button>
 
         <!-- Kitchen Admin Toggle -->
         <button id="btn-toggle-admin" class="btn-admin-switch" title="Access Staff Kitchen Board">
@@ -451,7 +456,7 @@
           <div style="margin-bottom: 1.25rem;">
             <div style="font-size: 0.68rem; font-weight: 700; letter-spacing: 0.1em; text-transform: uppercase; color: var(--color-ochre); margin-bottom: 0.4rem;">Quick Student Profile Presets</div>
             <div style="display: flex; gap: 0.4rem; flex-wrap: wrap;">
-              <button class="student-quick-btn active" data-name="Aravind Swaminathan" data-reg="22BCS142" data-dept="Computer Science & Engineering">Aravind (CSE)</button>
+              <button class="student-quick-btn active" data-name="Dinesh C" data-reg="22BCS142" data-dept="Computer Science & Engineering">Dinesh (CSE)</button>
               <button class="student-quick-btn" data-name="Sneha Rangarajan" data-reg="23BIT089" data-dept="Information Technology">Sneha (IT)</button>
               <button class="student-quick-btn" data-name="Rohan Deshmukh" data-reg="21BME205" data-dept="Mechanical Engineering">Rohan (Mech)</button>
               <button class="student-quick-btn" data-name="Kavya Sree" data-reg="24BAI017" data-dept="Artificial Intelligence & DS">Kavya (AI)</button>
@@ -460,7 +465,7 @@
 
           <div class="form-group">
             <label for="checkout-name">Student Full Name</label>
-            <input type="text" id="checkout-name" class="form-control" placeholder="e.g. Aravind Swaminathan" required>
+            <input type="text" id="checkout-name" class="form-control" placeholder="e.g. Dinesh C" required>
           </div>
 
           <div class="form-group">
@@ -620,7 +625,75 @@
     </div>
   </div>
 
+  <!-- ========================================================================
+       SQLITE DATABASE STUDIO & INSPECTOR MODAL
+       ======================================================================== -->
+  <div id="sqlite-modal" class="modal-backdrop">
+    <div style="background: #101014; border: 1px solid rgba(212, 175, 55, 0.35); border-radius: 16px; width: 100%; max-width: 960px; max-height: 90vh; display: flex; flex-direction: column; overflow: hidden; box-shadow: 0 35px 80px rgba(0,0,0,0.9);">
+      
+      <!-- Studio Header -->
+      <div style="padding: 1.25rem 1.75rem; border-bottom: 1px solid rgba(255,255,255,0.1); display: flex; align-items: center; justify-content: space-between; background: #15151B;">
+        <div style="display: flex; align-items: center; gap: 0.75rem;">
+          <div style="width: 32px; height: 32px; border-radius: 8px; background: rgba(212, 175, 55, 0.18); color: #E5C365; display: flex; align-items: center; justify-content: center;">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><ellipse cx="12" cy="5" rx="9" ry="3"/><path d="M21 12c0 1.66-4 3-9 3s-9-1.34-9-3"/><path d="M3 5v14c0 1.66 4 3 9 3s9-1.34 9-3V5"/></svg>
+          </div>
+          <div>
+            <h3 style="font-family: var(--font-display); font-size: 1.2rem; font-weight: 800; color: #fff; text-transform: uppercase;">CANTENEX — Database Studio</h3>
+            <div style="font-size: 0.72rem; color: #A6A6B0;">Interactive SQL Query Engine & Live Schema Inspector</div>
+          </div>
+        </div>
+        <button id="btn-close-sqlite" style="color: #A6A6B0; font-size: 1.25rem; padding: 0.3rem 0.6rem; border-radius: 4px; transition: color 0.2s;">✕</button>
+      </div>
 
+      <!-- Studio Body -->
+      <div style="padding: 1.5rem; overflow-y: auto; flex: 1; display: flex; flex-direction: column; gap: 1.25rem;">
+        
+        <!-- Preset SQL Queries -->
+        <div>
+          <div style="font-size: 0.72rem; font-weight: 700; letter-spacing: 0.1em; text-transform: uppercase; color: #E5C365; margin-bottom: 0.5rem;">Sample SQL Queries</div>
+          <div style="display: flex; gap: 0.5rem; flex-wrap: wrap;">
+            <button class="btn-sql-preset" data-query="SELECT * FROM orders;">📄 All Orders</button>
+            <button class="btn-sql-preset" data-query="SELECT * FROM menu_items WHERE in_stock = 1;">🥗 In-Stock Menu</button>
+            <button class="btn-sql-preset" data-query="SELECT category, COUNT(*) as item_count, AVG(price) as avg_price FROM menu_items GROUP BY category;">📊 Category Summary</button>
+            <button class="btn-sql-preset" data-query="SELECT * FROM order_items;">📋 Order Line Items</button>
+            <button class="btn-sql-preset" data-query="SELECT student_name, reg_no, count(id) as total_orders, sum(total_amount) as spent FROM orders GROUP BY reg_no;">🎓 Student Spend</button>
+            <button class="btn-sql-preset" data-query="SELECT * FROM dish_reviews;">⭐ Student Reviews</button>
+          </div>
+        </div>
+
+        <!-- SQL Editor Box -->
+        <div style="display: flex; flex-direction: column; gap: 0.5rem;">
+          <div style="display: flex; justify-content: space-between; align-items: center;">
+            <label for="sql-query-input" style="font-size: 0.72rem; font-weight: 700; text-transform: uppercase; color: var(--text-light-muted);">SQL Query Editor</label>
+            <span style="font-size: 0.72rem; color: #8E8E98;">Schema: <strong>students, menu_items, orders, order_items, dish_reviews</strong></span>
+          </div>
+          <div style="position: relative;">
+            <textarea id="sql-query-input" rows="3" style="width: 100%; padding: 0.85rem 1rem; background: #0A0A0D; border: 1px solid rgba(255,255,255,0.15); border-radius: 8px; color: #4ADE80; font-family: monospace; font-size: 0.9rem; resize: vertical; line-height: 1.5;">SELECT * FROM orders;</textarea>
+          </div>
+          <div style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 0.5rem;">
+            <div style="font-size: 0.75rem; color: var(--text-light-muted);" id="sql-exec-meta">Ready to execute query</div>
+            <div style="display: flex; gap: 0.5rem; flex-wrap: wrap;">
+              <button id="btn-export-sql-csv" style="padding: 0.5rem 0.85rem; font-size: 0.75rem; font-weight: 700; color: #E5C365; background: rgba(229, 195, 101, 0.12); border: 1px solid rgba(229, 195, 101, 0.25); border-radius: 6px;">📥 Export CSV</button>
+              <button id="btn-export-sql-json" style="padding: 0.5rem 0.85rem; font-size: 0.75rem; font-weight: 700; color: #60A5FA; background: rgba(96, 165, 250, 0.12); border: 1px solid rgba(96, 165, 250, 0.25); border-radius: 6px;">📥 Export JSON</button>
+              <button id="btn-reset-db" style="padding: 0.5rem 0.85rem; font-size: 0.75rem; font-weight: 700; color: #F87171; background: rgba(239, 68, 68, 0.12); border: 1px solid rgba(239, 68, 68, 0.25); border-radius: 6px;">Reset Demo Data</button>
+              <button id="btn-execute-sql" class="btn-primary-editorial" style="padding: 0.55rem 1.25rem; font-size: 0.78rem;">
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor"><polygon points="5 3 19 12 5 21 5 3"/></svg>
+                <span>Run Query</span>
+              </button>
+            </div>
+          </div>
+        </div>
+
+        <!-- SQL Query Results Table -->
+        <div style="background: #0D0D10; border: 1px solid rgba(255,255,255,0.1); border-radius: 8px; overflow: hidden; min-height: 160px; max-height: 280px; overflow-y: auto;">
+          <div id="sql-results-container">
+            <!-- Results table populated dynamically -->
+          </div>
+        </div>
+
+      </div>
+    </div>
+  </div>
 
   <!-- ========================================================================
        FULLSCREEN CANTEEN TV KIOSK / DISPATCH BOARD MODAL

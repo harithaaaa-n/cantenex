@@ -29,6 +29,7 @@ function initApp() {
   bindCheckoutModal();
   bindAdminEvents();
   bindLegalModals();
+  bindSQLiteStudio();
   bindTrackingLookup();
   bindDishSpotlightModal();
   bindUPISimulator();
@@ -1035,6 +1036,138 @@ function renderKioskBoard() {
       <div style="font-size: 0.75rem; color: #4ADE80; font-weight: 700; margin-top: 0.35rem;">Ready for Pickup ✓</div>
     </div>
   `).join('') : `<p style="color: #666; font-size: 0.9rem;">All ready orders collected.</p>`;
+}
+
+function bindSQLiteStudio() {
+  const openBtn = document.getElementById('btn-open-sqlite');
+  const modal = document.getElementById('sqlite-modal');
+  const closeBtn = document.getElementById('btn-close-sqlite');
+  const runBtn = document.getElementById('btn-execute-sql');
+  const resetBtn = document.getElementById('btn-reset-db');
+  const exportCsvBtn = document.getElementById('btn-export-sql-csv');
+  const exportJsonBtn = document.getElementById('btn-export-sql-json');
+  const queryInput = document.getElementById('sql-query-input');
+  const resultsContainer = document.getElementById('sql-results-container');
+  const metaEl = document.getElementById('sql-exec-meta');
+  const presets = document.querySelectorAll('.btn-sql-preset');
+
+  const executeCurrentSQL = () => {
+    const sql = queryInput?.value.trim();
+    if (!sql) return;
+    sounds.playClick();
+    const t0 = performance.now();
+    try {
+      const res = store.executeSQL(sql);
+      lastQueryResults = res;
+      const elapsed = (performance.now() - t0).toFixed(2);
+      if (metaEl) metaEl.innerHTML = `<span style="color: #4ADE80;">✓ Query executed in ${elapsed}ms (${res.count} rows returned)</span>`;
+      
+      let tableHtml = `
+        <table class="sql-table">
+          <thead>
+            <tr>${res.columns.map(c => `<th>${c}</th>`).join('')}</tr>
+          </thead>
+          <tbody>
+            ${res.rows.map(r => `<tr>${r.map(v => `<td>${v}</td>`).join('')}</tr>`).join('')}
+          </tbody>
+        </table>
+      `;
+      if (resultsContainer) resultsContainer.innerHTML = tableHtml;
+    } catch (err) {
+      if (metaEl) metaEl.innerHTML = `<span style="color: #F87171;">✕ SQL Error: ${err.message}</span>`;
+      if (resultsContainer) resultsContainer.innerHTML = `<div style="padding: 1rem; color: #F87171; font-family: monospace; font-size: 0.85rem;">${err.message}</div>`;
+    }
+  };
+
+  if (exportCsvBtn) {
+    exportCsvBtn.addEventListener('click', () => {
+      sounds.playClick();
+      if (!lastQueryResults || !lastQueryResults.rows.length) {
+        executeCurrentSQL();
+      }
+      if (lastQueryResults && lastQueryResults.rows.length) {
+        const header = lastQueryResults.columns.join(',');
+        const csvRows = lastQueryResults.rows.map(r => r.map(val => `"${String(val).replace(/"/g, '""')}"`).join(','));
+        const csvContent = "data:text/csv;charset=utf-8," + [header, ...csvRows].join('\n');
+        const encodedUri = encodeURI(csvContent);
+        const link = document.createElement("a");
+        link.setAttribute("href", encodedUri);
+        link.setAttribute("download", `cantenex_export_${Date.now()}.csv`);
+        document.body.appendChild(link);
+        link.click();
+        document.body.removeChild(link);
+      }
+    });
+  }
+
+  if (exportJsonBtn) {
+    exportJsonBtn.addEventListener('click', () => {
+      sounds.playClick();
+      if (!lastQueryResults || !lastQueryResults.rows.length) {
+        executeCurrentSQL();
+      }
+      if (lastQueryResults && lastQueryResults.rows.length) {
+        const jsonArray = lastQueryResults.rows.map(row => {
+          const obj = {};
+          lastQueryResults.columns.forEach((col, idx) => {
+            obj[col] = row[idx];
+          });
+          return obj;
+        });
+        const jsonContent = "data:text/json;charset=utf-8," + encodeURIComponent(JSON.stringify(jsonArray, null, 2));
+        const link = document.createElement("a");
+        link.setAttribute("href", jsonContent);
+        link.setAttribute("download", `cantenex_export_${Date.now()}.json`);
+        document.body.appendChild(link);
+        link.click();
+        document.body.removeChild(link);
+      }
+    });
+  }
+
+  if (openBtn && modal) {
+    openBtn.addEventListener('click', () => {
+      sounds.playClick();
+      modal.classList.add('active');
+      executeCurrentSQL();
+    });
+  }
+
+  if (closeBtn && modal) {
+    closeBtn.addEventListener('click', () => {
+      sounds.playClick();
+      modal.classList.remove('active');
+    });
+  }
+
+  if (modal) {
+    modal.addEventListener('click', (e) => {
+      if (e.target === modal) modal.classList.remove('active');
+    });
+  }
+
+  if (runBtn) runBtn.addEventListener('click', executeCurrentSQL);
+
+  if (resetBtn) {
+    resetBtn.addEventListener('click', () => {
+      if (confirm('Reset demo orders, menu items and student reviews to initial factory state?')) {
+        sounds.playClick();
+        store.resetDemoData();
+        executeCurrentSQL();
+      }
+    });
+  }
+
+  presets.forEach(btn => {
+    btn.addEventListener('click', (e) => {
+      sounds.playClick();
+      const q = e.currentTarget.getAttribute('data-query');
+      if (queryInput && q) {
+        queryInput.value = q;
+        executeCurrentSQL();
+      }
+    });
+  });
 }
 
 function bindLegalModals() {

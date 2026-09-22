@@ -366,7 +366,7 @@
   const INITIAL_ORDERS = [
     {
       id: 'CX-1021',
-      studentName: 'Aravind Swaminathan',
+      studentName: 'Dinesh C',
       regNo: '22BCS142',
       department: 'Computer Science & Engineering',
       items: [
@@ -442,7 +442,7 @@
     {
       id: 'rev-1',
       menuId: 'cx-04',
-      studentName: 'Aravind S. (CSE)',
+      studentName: 'Dinesh C. (CSE)',
       rating: 5,
       comment: 'The chicken dum biryani is incredible! Dum aroma is authentic and chicken pieces are super tender.',
       date: 'Today, 12:45 PM'
@@ -610,11 +610,19 @@
       this.selectedSlot = this.load('cantenex_slot', PICKUP_SLOTS[0]);
       this.activeTrackingId = this.load('cantenex_active_tracking', this.orders[0]?.id || 'CX-1021');
       this.currentUser = this.load('cantenex_user', {
-        name: 'Aravind Swaminathan',
+        name: 'Dinesh C',
         regNo: '22BCS142',
         department: 'Computer Science & Engineering',
         role: 'student',
       });
+      if (this.currentUser && this.currentUser.name === 'Aravind Swaminathan') {
+        this.currentUser.name = 'Dinesh C';
+        this.save('cantenex_user', this.currentUser);
+      }
+      this.orders.forEach(o => {
+        if (o.studentName === 'Aravind Swaminathan') o.studentName = 'Dinesh C';
+      });
+      this.save('cantenex_orders', this.orders);
 
       window.addEventListener('storage', (e) => {
         if (e.key === 'cantenex_orders') {
@@ -947,7 +955,7 @@
 
         if (lower.includes('from students')) {
           const rows = [
-            ['22BCS142', 'Aravind Swaminathan', 'Computer Science & Engineering', '2026-09-01 08:30:00'],
+            ['22BCS142', 'Dinesh C', 'Computer Science & Engineering', '2026-09-01 08:30:00'],
             ['23BIT089', 'Sneha Rangarajan', 'Information Technology', '2026-09-01 08:45:00'],
             ['21BME205', 'Rohan Deshmukh', 'Mechanical Engineering', '2026-09-01 09:15:00'],
             ['24BAI017', 'Kavya Sree', 'Artificial Intelligence & DS', '2026-09-01 10:00:00'],
@@ -1091,6 +1099,7 @@
     bindCheckoutModal();
     bindAdminEvents();
     bindLegalModals();
+    bindSQLiteStudio();
     bindTrackingLookup();
     bindDishSpotlightModal();
     bindUPISimulator();
@@ -2104,6 +2113,138 @@
   }
 
   let lastQueryResults = null;
+
+  function bindSQLiteStudio() {
+    const openBtn = document.getElementById('btn-open-sqlite');
+    const modal = document.getElementById('sqlite-modal');
+    const closeBtn = document.getElementById('btn-close-sqlite');
+    const runBtn = document.getElementById('btn-execute-sql');
+    const resetBtn = document.getElementById('btn-reset-db');
+    const exportCsvBtn = document.getElementById('btn-export-sql-csv');
+    const exportJsonBtn = document.getElementById('btn-export-sql-json');
+    const queryInput = document.getElementById('sql-query-input');
+    const resultsContainer = document.getElementById('sql-results-container');
+    const metaEl = document.getElementById('sql-exec-meta');
+    const presets = document.querySelectorAll('.btn-sql-preset');
+
+    const executeCurrentSQL = () => {
+      const sql = queryInput?.value.trim();
+      if (!sql) return;
+      sounds.playClick();
+      const t0 = performance.now();
+      try {
+        const res = store.executeSQL(sql);
+        lastQueryResults = res;
+        const elapsed = (performance.now() - t0).toFixed(2);
+        if (metaEl) metaEl.innerHTML = `<span style="color: #4ADE80;">✓ Query executed in ${elapsed}ms (${res.count} rows returned)</span>`;
+        
+        let tableHtml = `
+          <table class="sql-table">
+            <thead>
+              <tr>${res.columns.map(c => `<th>${c}</th>`).join('')}</tr>
+            </thead>
+            <tbody>
+              ${res.rows.map(r => `<tr>${r.map(v => `<td>${v}</td>`).join('')}</tr>`).join('')}
+            </tbody>
+          </table>
+        `;
+        if (resultsContainer) resultsContainer.innerHTML = tableHtml;
+      } catch (err) {
+        if (metaEl) metaEl.innerHTML = `<span style="color: #F87171;">✕ SQL Error: ${err.message}</span>`;
+        if (resultsContainer) resultsContainer.innerHTML = `<div style="padding: 1rem; color: #F87171; font-family: monospace; font-size: 0.85rem;">${err.message}</div>`;
+      }
+    };
+
+    if (exportCsvBtn) {
+      exportCsvBtn.addEventListener('click', () => {
+        sounds.playClick();
+        if (!lastQueryResults || !lastQueryResults.rows.length) {
+          executeCurrentSQL();
+        }
+        if (lastQueryResults && lastQueryResults.rows.length) {
+          const header = lastQueryResults.columns.join(',');
+          const csvRows = lastQueryResults.rows.map(r => r.map(val => `"${String(val).replace(/"/g, '""')}"`).join(','));
+          const csvContent = "data:text/csv;charset=utf-8," + [header, ...csvRows].join('\n');
+          const encodedUri = encodeURI(csvContent);
+          const link = document.createElement("a");
+          link.setAttribute("href", encodedUri);
+          link.setAttribute("download", `cantenex_export_${Date.now()}.csv`);
+          document.body.appendChild(link);
+          link.click();
+          document.body.removeChild(link);
+        }
+      });
+    }
+
+    if (exportJsonBtn) {
+      exportJsonBtn.addEventListener('click', () => {
+        sounds.playClick();
+        if (!lastQueryResults || !lastQueryResults.rows.length) {
+          executeCurrentSQL();
+        }
+        if (lastQueryResults && lastQueryResults.rows.length) {
+          const jsonArray = lastQueryResults.rows.map(row => {
+            const obj = {};
+            lastQueryResults.columns.forEach((col, idx) => {
+              obj[col] = row[idx];
+            });
+            return obj;
+          });
+          const jsonContent = "data:text/json;charset=utf-8," + encodeURIComponent(JSON.stringify(jsonArray, null, 2));
+          const link = document.createElement("a");
+          link.setAttribute("href", jsonContent);
+          link.setAttribute("download", `cantenex_export_${Date.now()}.json`);
+          document.body.appendChild(link);
+          link.click();
+          document.body.removeChild(link);
+        }
+      });
+    }
+
+    if (openBtn && modal) {
+      openBtn.addEventListener('click', () => {
+        sounds.playClick();
+        modal.classList.add('active');
+        executeCurrentSQL();
+      });
+    }
+
+    if (closeBtn && modal) {
+      closeBtn.addEventListener('click', () => {
+        sounds.playClick();
+        modal.classList.remove('active');
+      });
+    }
+
+    if (modal) {
+      modal.addEventListener('click', (e) => {
+        if (e.target === modal) modal.classList.remove('active');
+      });
+    }
+
+    if (runBtn) runBtn.addEventListener('click', executeCurrentSQL);
+
+    if (resetBtn) {
+      resetBtn.addEventListener('click', () => {
+        if (confirm('Reset demo orders, menu items and student reviews to initial factory state?')) {
+          sounds.playClick();
+          store.resetDemoData();
+          executeCurrentSQL();
+        }
+      });
+    }
+
+    presets.forEach(btn => {
+      btn.addEventListener('click', (e) => {
+        sounds.playClick();
+        const q = e.currentTarget.getAttribute('data-query');
+        if (queryInput && q) {
+          queryInput.value = q;
+          executeCurrentSQL();
+        }
+      });
+    });
+  }
 
   function bindLegalModals() {
     const termsModal = document.getElementById('terms-modal');

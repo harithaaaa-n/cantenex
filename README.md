@@ -1,47 +1,48 @@
-# CANTENEX — Campus Dining & Express Pre-Order Platform
+# CANTENEX — Modern Campus Dining & Express Pre-Order Platform
 
-> **GOOD FOOD. ZERO WAIT.**  
-> An editorial, Dribbble/Awwwards-level college canteen pre-order web application and SQLite database architecture built for modern university dining.
+> **An editorial Dribbble / Awwwards-level campus pre-order web application and relational database management system designed for university food courts.**
 
 ---
 
 ## 🌟 Overview
 
-**CANTENEX** solves campus rush-hour canteen congestion through a pre-order workflow mapped directly to lecture breaks. Students explore authentic specialties, customize orders, pick a break slot, pay seamlessly via simulated UPI or Cash, and receive an instant digital QR token with thermal receipt printing.
-
-Meanwhile, canteen operators manage orders in real time via an **Admin Kitchen Queue** and a full-screen **Canteen TV Kiosk Monitor**.
+**CANTENEX** bridges the gap between busy lecture schedules and canteen kitchen queues. Built with semantic HTML5, pure modular CSS3, vanilla JavaScript, and an SQLite database architecture, CANTENEX allows students to schedule pick-ups for designated class breaks, generate digital QR token passes, track kitchen preparation live, and provides kitchen staff with an administrative dispatch board and TV monitor mode.
 
 ---
 
-## 🚀 Key Features
+## ✨ Key Features
 
-### 🎓 Student Experience
-- **Editorial Art Direction**: Asymmetric hero layout, massive display typography (`Syne`), serif italic subtitles (`Cormorant Garamond`), and warm cream-to-charcoal palette shifts.
-- **Mouse-Reactive 3D Tilt Parallax**: Interactive food visuals with dynamic soft glare and layered badge depths.
-- **Campus Break Slots**:
-  - ⚡ *Ready in 10-12 Mins* (Immediate Queue)
-  - 🕒 *11:15 AM — Morning Break* (15 mins)
-  - 🍛 *01:15 PM — Lunch Break* (Main Lunch Hour)
-  - ☕ *03:45 PM — Evening Snack* (Post-Lecture Tea)
-  - 🌙 *05:30 PM — After Hours* (Lab & Study Slot)
-- **Dish Spotlight Modal**: Detailed macronutrient breakdown (Energy, Protein, Carbs, Prep Time) with an interactive **5-Star Rating & Student Community Review System**.
-- **Slide-Out Food Tray & Split Checkout**: Instant subtotal calculation with student profile presets and multiple payment modes (Verified Campus UPI QR Simulator / Cash at Counter).
-- **Zero-Wait QR Tokens & Live Stepper**: Real-time progress tracker (`PLACED` → `ACCEPTED` → `PREPARING` → `READY` → `COMPLETED`) with printable POS-style thermal receipts.
-- **Audio Feedback Engine**: Web Audio synthesis micro-interactions and Web Speech voice announcements.
-
-### 🍳 Kitchen Operations & Staff
-- **Central Kitchen Queue**: 1-click status progression (`Accept` → `Start Cooking` → `Mark Ready` → `Complete`).
-- **Live Menu Stock & Price Controller**: Instantly mark items Sold-Out or adjust prices.
-- **Canteen Live TV Kiosk Board**: Full-screen split monitor for overhead canteen displays showing *🔥 Preparing in Kitchen* and *✅ Ready for Pickup*.
-
-### 🗄️ Backend & Database Architecture
-- **SQLite Database (`cantenex.db`)**: Relational database schema with foreign key constraints, check clauses, and seed records:
-  - `students`: College registration records, names, departments
-  - `menu_items`: 16 Indian canteen specialties, nutrition, stock, pricing, spice levels
-  - `orders`: Unique tokens, totals, break pickup slots, counter dispatches, timestamps
-  - `order_items`: Line-item junction records with quantities and unit prices
-  - `dish_reviews`: Student ratings (1-5 stars) and feedback comments
-- **Python SQLite REST API (`database.py`)**: Built-in HTTP server exposing endpoints for menu, orders, metrics, stock toggles, prices, and reviews without requiring heavy frameworks.
+- **Asymmetric Editorial Art Direction**: 
+  - Typography: Syne Display + Cormorant Garamond Serif + Plus Jakarta Sans UI.
+  - Palette shifts: Deep charcoal hero, terracotta chef's spotlight, warm cream daily menu, and olive forest operations timeline.
+- **Interactive 3D Food Parallax**:
+  - Physics-based mouse-tilt depth engine with dynamic specular glare and floating layered Z-depth badges.
+- **Campus Class-Break Scheduling**:
+  - Pre-order for immediate pickup (10–12 mins) or scheduled break slots (11:15 AM Morning Break, 1:15 PM Lunch Break, 3:45 PM Evening Snack).
+- **Split-Screen Student Checkout**:
+  - Fast student profiles for instant verification.
+  - Simulated UPI Dynamic QR Code and Cash at Counter payment flows.
+  - Instant thermal printable receipt with deterministic SVG QR code token.
+- **Real-Time Order Tracking**:
+  - 5-stage live kitchen stepper: `PLACED` ➔ `ACCEPTED` ➔ `PREPARING` ➔ `READY` ➔ `COMPLETED`.
+  - Token search engine (`CX-1021`, `CX-1022`, etc.).
+- **Student Community Dish Reviews & Ratings**:
+  - Live 5-star interactive rating picker and student community reviews.
+  - Dynamic recalculation of dish average star rating in real-time.
+- **Central Kitchen Queue & Dispatch Portal**:
+  - Single-click order status progression.
+  - Live inventory controller (instant In-Stock / Sold-Out toggles and price editing).
+  - Derived live revenue and queue statistics.
+- **Canteen TV Kiosk Monitor**:
+  - Fullscreen high-contrast display designed for overhead canteen television screens with live cooking & pickup token callout columns.
+- **Interactive Database Studio**:
+  - In-browser SQL query editor with preset queries.
+  - 1-click **Export to CSV** and **Export to JSON** data downloads.
+  - Live schema inspector for `students`, `menu_items`, `orders`, `order_items`, and `dish_reviews`.
+- **Micro-Interaction Sound & Speech Engine**:
+  - Synthesized Web Audio chimes for button interactions and orders (zero external audio assets).
+  - Web Speech voice announcements calling out ready tokens.
+  - Header audio toggle switch (`[Audio: ON / MUTED]`).
 
 ---
 
@@ -49,53 +50,45 @@ Meanwhile, canteen operators manage orders in real time via an **Admin Kitchen Q
 
 | Layer | Technology |
 |---|---|
-| **Structure** | Semantic HTML5 (W3C standard, ARIA attributes) |
-| **Styling** | Pure Vanilla CSS3 (Custom Design Tokens, Syne & Cormorant Typography, No Frameworks) |
-| **Logic & Motion** | Vanilla JavaScript ES6+ (Event Bus, 3D Parallax Tilt, Dynamic SVG QR Generator) |
-| **Sound & Voice** | Web Audio API Oscillator Synthesis + Web Speech Synthesis |
-| **Database** | SQLite3 (`schema.sql` + `database.py`) |
-| **Portability** | Standalone zero-dependency runtime (runs directly in browser or with Python) |
+| **Structure** | Semantic HTML5 with accessible ARIA landmarks |
+| **Styling** | Pure CSS3 (Design Tokens, CSS Grid, Flexbox, Custom Keyframes) |
+| **Logic & Motion** | Modular JavaScript (ES6+ / Universal Standalone Engine) |
+| **Audio** | Web Audio API Oscillator synthesis + Web Speech Synthesis |
+| **Relational Database** | SQLite (`schema.sql` DDL + Python REST server `database.py`) |
+| **Execution** | Universal dual-mode: direct double-click `file:///` or Python server |
 
 ---
 
-## 📂 Project Structure
+## 🚀 Getting Started
 
-```
-cantenex/
-├── css/
-│   ├── style.css           # Design tokens, editorial typography, themes & modals
-│   └── responsive.css      # Art-directed responsive layouts (375px to 1440px+)
-├── js/
-│   ├── data.js             # 16 canteen dishes, nutrition macros, pickup slots, departments
-│   ├── store.js            # State store, localStorage persistence, QR generator
-│   ├── audio.js            # Web Audio synthesis micro-interactions & voice engine
-│   ├── depth3d.js          # Mouse-reactive 3D parallax tilt & dynamic light glare
-│   ├── app.js              # Main application controller & DOM event orchestrator
-│   └── bundle.js           # Universal standalone bundle for zero-config file:/// execution
-├── schema.sql              # Complete SQLite DDL schema and initial seed data
-├── database.py             # Python SQLite backend server & REST API controller
-├── index.html              # Main application HTML entry point
-└── README.md               # Project documentation
+### 1. Zero-Config Direct Browser Mode
+Double click `index.html` or open directly in any modern web browser:
+```bash
+file:///path/to/cantenex/index.html
 ```
 
----
-
-## 💻 How to Run
-
-### Option 1: Direct File Launch (No setup required)
-Double-click [`index.html`](./index.html) or open it in any browser:
-```
-file:///c:/projects/cantenex/index.html
-```
-
-### Option 2: Python SQLite Server
-Run the built-in SQLite server:
+### 2. Full SQLite REST Backend (Optional)
+Run the built-in Python SQLite server:
 ```bash
 python database.py 8000
 ```
-Then visit [http://localhost:8000](http://localhost:8000).
+Then visit `http://localhost:8000`.
 
 ---
 
-## 📜 License
-Developed as a Web Essentials Mini Project. Built with clean HTML5, CSS3, JavaScript, and SQLite.
+## 🗄️ Database Schema
+
+The database consists of 5 relational tables:
+1. **`students`** — Register number, student name, department.
+2. **`menu_items`** — Dish codes, pricing, diet (veg/non-veg), preparation time, calories, stock status, ratings.
+3. **`orders`** — Unique token IDs, student details, break slots, payment methods, status, counter assignments.
+4. **`order_items`** — Junction table mapping items and quantities to orders.
+5. **`dish_reviews`** — Student ratings and community feedback.
+
+---
+
+## 👨‍🎓 Project Credits
+
+- **Developer**: Dinesh C
+- **Course**: Web Essentials Mini Project
+- **License**: MIT
