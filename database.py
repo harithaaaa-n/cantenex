@@ -264,6 +264,9 @@ def run_server(port=8000):
     httpd.serve_forever()
 
 if __name__ == "__main__":
+    if len(sys.argv) > 1 and sys.argv[1] in ("--init", "-i", "init"):
+        init_database()
+        sys.exit(0)
     port = 8000
     if len(sys.argv) > 1:
         try:

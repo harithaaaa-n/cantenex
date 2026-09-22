@@ -10,12 +10,12 @@
      1. DATA & CONSTANTS
      ========================================================================== */
   const MENU_CATEGORIES = [
-    { id: 'ALL', label: 'All Items', count: 16 },
-    { id: 'BREAKFAST', label: 'Morning Tiffin', count: 3 },
-    { id: 'MEALS', label: 'Lunch & Bowls', count: 4 },
-    { id: 'SNACKS', label: 'Quick Bites', count: 3 },
-    { id: 'DRINKS', label: 'Brews & Coolers', count: 4 },
-    { id: 'DESSERTS', label: 'Sweet Finishes', count: 2 },
+    { id: 'ALL', label: 'All Items', count: 36 },
+    { id: 'BREAKFAST', label: 'Morning Tiffin', count: 7 },
+    { id: 'MEALS', label: 'Lunch & Bowls', count: 9 },
+    { id: 'SNACKS', label: 'Quick Bites', count: 8 },
+    { id: 'DRINKS', label: 'Brews & Coolers', count: 8 },
+    { id: 'DESSERTS', label: 'Sweet Finishes', count: 4 },
   ];
 
   const PICKUP_SLOTS = [
@@ -39,6 +39,7 @@
   ];
 
   const INITIAL_MENU_ITEMS = [
+    // BREAKFAST (7 Items)
     {
       id: 'cx-01',
       code: '01',
@@ -101,6 +102,88 @@
       rating: 4.7,
     },
     {
+      id: 'cx-17',
+      code: '17',
+      name: 'Mysore Masala Dosa with Red Garlic Chutney',
+      category: 'BREAKFAST',
+      price: 70,
+      prepTime: '8 mins',
+      diet: 'veg',
+      tag: 'Fiery Crisp',
+      description: 'Golden butter roasted crepe smeared with pungent red chili garlic Mysore paste, filled with spiced mashed potato filling, served with coconut chutney and piping hot drumstick sambar.',
+      image: 'https://images.unsplash.com/photo-1668236543090-82eba5ee5976?auto=format&fit=crop&w=1200&q=85',
+      fallbackImage: 'https://images.unsplash.com/photo-1610192244261-3f33de3f55e4?auto=format&fit=crop&w=1200&q=85',
+      calories: '360 kcal',
+      protein: '9g',
+      carbs: '50g',
+      fats: '14g',
+      inStock: true,
+      spiceLevel: 3,
+      rating: 4.9,
+    },
+    {
+      id: 'cx-18',
+      code: '18',
+      name: 'Puri Bhaji with Spiced Potato Masala (3 Pcs)',
+      category: 'BREAKFAST',
+      price: 55,
+      prepTime: '6 mins',
+      diet: 'veg',
+      tag: 'Student Classic',
+      description: 'Trio of puffed golden whole-wheat puris served with aromatic turmeric tempered cumin-potato bhaji, freshly sliced onions, green chilies, and tangy mango pickle.',
+      image: 'https://images.unsplash.com/photo-1601050690597-df0568f70950?auto=format&fit=crop&w=1200&q=85',
+      fallbackImage: 'https://images.unsplash.com/photo-1589301760014-d929f3979dbc?auto=format&fit=crop&w=1200&q=85',
+      calories: '380 kcal',
+      protein: '8g',
+      carbs: '52g',
+      fats: '16g',
+      inStock: true,
+      spiceLevel: 2,
+      rating: 4.8,
+    },
+    {
+      id: 'cx-19',
+      code: '19',
+      name: 'Crispy Onion Rava Dosa with Ginger Dip',
+      category: 'BREAKFAST',
+      price: 65,
+      prepTime: '9 mins',
+      diet: 'veg',
+      tag: 'Golden Net',
+      description: 'Delicate semolina lacy net crepe studded with crunchy chopped shallots, green chilies, crushed black peppercorns, and roasted cumin. Served crisp with allam ginger pachadi.',
+      image: 'https://images.unsplash.com/photo-1668236543090-82eba5ee5976?auto=format&fit=crop&w=1200&q=85',
+      fallbackImage: 'https://images.unsplash.com/photo-1626777552726-4a6b54c97e46?auto=format&fit=crop&w=1200&q=85',
+      calories: '320 kcal',
+      protein: '7g',
+      carbs: '46g',
+      fats: '12g',
+      inStock: true,
+      spiceLevel: 2,
+      rating: 4.7,
+    },
+    {
+      id: 'cx-20',
+      code: '20',
+      name: 'Lacy Kerala Appam with Vegetable Stew (2 Pcs)',
+      category: 'BREAKFAST',
+      price: 60,
+      prepTime: '7 mins',
+      diet: 'veg',
+      tag: 'Coastal Delight',
+      description: 'Fermented rice and coconut milk hopper with a soft spongy center and crispy lacy edges, paired with mildly spiced coconut milk stew laden with carrots, beans, and potatoes.',
+      image: 'https://images.unsplash.com/photo-1626777552726-4a6b54c97e46?auto=format&fit=crop&w=1200&q=85',
+      fallbackImage: 'https://images.unsplash.com/photo-1589301760014-d929f3979dbc?auto=format&fit=crop&w=1200&q=85',
+      calories: '260 kcal',
+      protein: '6g',
+      carbs: '44g',
+      fats: '7g',
+      inStock: true,
+      spiceLevel: 1,
+      rating: 4.8,
+    },
+
+    // MEALS (9 Items)
+    {
       id: 'cx-04',
       code: '04',
       name: 'Malabar Chicken Dum Biryani',
@@ -135,8 +218,8 @@
       fallbackImage: 'https://images.unsplash.com/photo-1668236543090-82eba5ee5976?auto=format&fit=crop&w=1200&q=85',
       calories: '520 kcal',
       protein: '14g',
-      carbs: '85g',
-      fats: '12g',
+      carbs: '78g',
+      fats: '16g',
       inStock: true,
       spiceLevel: 2,
       rating: 4.8,
@@ -154,9 +237,9 @@
       image: 'https://images.unsplash.com/photo-1603133872878-684f208fb84b?auto=format&fit=crop&w=1200&q=85',
       fallbackImage: 'https://images.unsplash.com/photo-1563379091339-03b21ab4a4f8?auto=format&fit=crop&w=1200&q=85',
       calories: '490 kcal',
-      protein: '24g',
-      carbs: '60g',
-      fats: '16g',
+      protein: '26g',
+      carbs: '62g',
+      fats: '15g',
       inStock: true,
       spiceLevel: 3,
       rating: 4.9,
@@ -174,13 +257,116 @@
       image: 'https://images.unsplash.com/photo-1645177628172-a94c1f96e6db?auto=format&fit=crop&w=1200&q=85',
       fallbackImage: 'https://images.unsplash.com/photo-1626777552726-4a6b54c97e46?auto=format&fit=crop&w=1200&q=85',
       calories: '460 kcal',
-      protein: '18g',
-      carbs: '52g',
+      protein: '24g',
+      carbs: '48g',
       fats: '20g',
       inStock: true,
       spiceLevel: 3,
       rating: 4.9,
     },
+    {
+      id: 'cx-21',
+      code: '21',
+      name: 'Hyderabadi Shahi Paneer Biryani Handi',
+      category: 'MEALS',
+      price: 115,
+      prepTime: '8 mins',
+      diet: 'veg',
+      tag: 'Royal Feast',
+      description: 'Long-grain aged basmati rice cooked on slow dum with tandoor grilled cottage cheese cubes, caramelized fried onions (birista), saffron milk, mint leaves, and rich cucumber raita.',
+      image: 'https://images.unsplash.com/photo-1563379091339-03b21ab4a4f8?auto=format&fit=crop&w=1200&q=85',
+      fallbackImage: 'https://images.unsplash.com/photo-1633945274405-b6c8069047b0?auto=format&fit=crop&w=1200&q=85',
+      calories: '510 kcal',
+      protein: '18g',
+      carbs: '68g',
+      fats: '19g',
+      inStock: true,
+      spiceLevel: 2,
+      rating: 4.8,
+      highlight: true,
+    },
+    {
+      id: 'cx-22',
+      code: '22',
+      name: 'Paneer Butter Masala with 2 Butter Naan',
+      category: 'MEALS',
+      price: 110,
+      prepTime: '8 mins',
+      diet: 'veg',
+      tag: 'North Indian Star',
+      description: 'Silky paneer cubes simmered in a luscious velvet tomato cashew gravy enriched with butter and dried fenugreek kasuri methi, served with 2 freshly charred butter garlic naans.',
+      image: 'https://images.unsplash.com/photo-1631452180519-c014fe946bc7?auto=format&fit=crop&w=1200&q=85',
+      fallbackImage: 'https://images.unsplash.com/photo-1626777552726-4a6b54c97e46?auto=format&fit=crop&w=1200&q=85',
+      calories: '540 kcal',
+      protein: '19g',
+      carbs: '58g',
+      fats: '26g',
+      inStock: true,
+      spiceLevel: 2,
+      rating: 4.9,
+    },
+    {
+      id: 'cx-23',
+      code: '23',
+      name: 'Student Mini Thali (Dal Makhani & Jeera Rice)',
+      category: 'MEALS',
+      price: 85,
+      prepTime: '5 mins',
+      diet: 'veg',
+      tag: 'Everyday Saver',
+      description: 'Slow-simmered black lentils in creamy butter gravy, fragrant cumin basmati rice, 2 hot phulkas, fresh pickled onions, and roasted papad for a wholesome lecture break lunch.',
+      image: 'https://images.unsplash.com/photo-1610192244261-3f33de3f55e4?auto=format&fit=crop&w=1200&q=85',
+      fallbackImage: 'https://images.unsplash.com/photo-1668236543090-82eba5ee5976?auto=format&fit=crop&w=1200&q=85',
+      calories: '450 kcal',
+      protein: '15g',
+      carbs: '65g',
+      fats: '14g',
+      inStock: true,
+      spiceLevel: 1,
+      rating: 4.7,
+    },
+    {
+      id: 'cx-24',
+      code: '24',
+      name: 'Street-Style Chicken Hakka Noodles',
+      category: 'MEALS',
+      price: 95,
+      prepTime: '9 mins',
+      diet: 'non-veg',
+      tag: 'Wok Master',
+      description: 'Springy egg noodles tossed in high-heat wok with tender chicken strips, crisp cabbage, julienned carrots, scallions, dark soy sauce, and crushed white peppercorns.',
+      image: 'https://images.unsplash.com/photo-1585032226651-759b368d7246?auto=format&fit=crop&w=1200&q=85',
+      fallbackImage: 'https://images.unsplash.com/photo-1603133872878-684f208fb84b?auto=format&fit=crop&w=1200&q=85',
+      calories: '470 kcal',
+      protein: '25g',
+      carbs: '59g',
+      fats: '16g',
+      inStock: true,
+      spiceLevel: 2,
+      rating: 4.8,
+    },
+    {
+      id: 'cx-25',
+      code: '25',
+      name: 'Comfort Curd Rice with Tadka & Pomegranate',
+      category: 'MEALS',
+      price: 45,
+      prepTime: '3 mins',
+      diet: 'veg',
+      tag: 'Cooling Bowl',
+      description: 'Creamy homemade curd mixed with soft mashed rice, tempered with mustard seeds, curry leaves, ginger, green chilies, roasted urad dal, and sweet ruby pomegranate pearls.',
+      image: 'https://images.unsplash.com/photo-1589301760014-d929f3979dbc?auto=format&fit=crop&w=1200&q=85',
+      fallbackImage: 'https://images.unsplash.com/photo-1610192244261-3f33de3f55e4?auto=format&fit=crop&w=1200&q=85',
+      calories: '260 kcal',
+      protein: '7g',
+      carbs: '42g',
+      fats: '7g',
+      inStock: true,
+      spiceLevel: 1,
+      rating: 4.8,
+    },
+
+    // SNACKS (8 Items)
     {
       id: 'cx-08',
       code: '08',
@@ -195,8 +381,8 @@
       fallbackImage: 'https://images.unsplash.com/photo-1603133872878-684f208fb84b?auto=format&fit=crop&w=1200&q=85',
       calories: '390 kcal',
       protein: '16g',
-      carbs: '40g',
-      fats: '18g',
+      carbs: '44g',
+      fats: '17g',
       inStock: true,
       spiceLevel: 2,
       rating: 4.7,
@@ -214,9 +400,9 @@
       image: 'https://images.unsplash.com/photo-1601050690597-df0568f70950?auto=format&fit=crop&w=1200&q=85',
       fallbackImage: 'https://images.unsplash.com/photo-1610192244261-3f33de3f55e4?auto=format&fit=crop&w=1200&q=85',
       calories: '320 kcal',
-      protein: '6g',
-      carbs: '44g',
-      fats: '14g',
+      protein: '8g',
+      carbs: '46g',
+      fats: '12g',
       inStock: true,
       spiceLevel: 2,
       rating: 4.8,
@@ -234,13 +420,116 @@
       image: 'https://images.unsplash.com/photo-1576107232684-1279f3908594?auto=format&fit=crop&w=1200&q=85',
       fallbackImage: 'https://images.unsplash.com/photo-1601050690597-df0568f70950?auto=format&fit=crop&w=1200&q=85',
       calories: '350 kcal',
-      protein: '4g',
+      protein: '5g',
       carbs: '48g',
       fats: '16g',
       inStock: true,
       spiceLevel: 2,
       rating: 4.6,
     },
+    {
+      id: 'cx-26',
+      code: '26',
+      name: 'Kolkata Double Egg & Chicken Roll',
+      category: 'SNACKS',
+      price: 85,
+      prepTime: '8 mins',
+      diet: 'non-veg',
+      tag: 'Protein Loaded',
+      description: 'Layered flaky parotta lined with two farm eggs, stuffed with spicy roasted shredded chicken, crunchy sliced red onions, green chilies, fresh lime juice, and Kasundi mustard mayo.',
+      image: 'https://images.unsplash.com/photo-1626777552726-4a6b54c97e46?auto=format&fit=crop&w=1200&q=85',
+      fallbackImage: 'https://images.unsplash.com/photo-1645177628172-a94c1f96e6db?auto=format&fit=crop&w=1200&q=85',
+      calories: '440 kcal',
+      protein: '28g',
+      carbs: '42g',
+      fats: '18g',
+      inStock: true,
+      spiceLevel: 3,
+      rating: 4.9,
+    },
+    {
+      id: 'cx-27',
+      code: '27',
+      name: 'Crispy Onion & Palak Pakoda Basket',
+      category: 'SNACKS',
+      price: 40,
+      prepTime: '6 mins',
+      diet: 'veg',
+      tag: 'Rainy Day Crunch',
+      description: 'Golden, extra-crisp fritters made from thinly sliced red onions and tender baby spinach coated in ajwain-spiced gram flour batter. Served with spicy pudina mint chutney.',
+      image: 'https://images.unsplash.com/photo-1601050690597-df0568f70950?auto=format&fit=crop&w=1200&q=85',
+      fallbackImage: 'https://images.unsplash.com/photo-1576107232684-1279f3908594?auto=format&fit=crop&w=1200&q=85',
+      calories: '290 kcal',
+      protein: '6g',
+      carbs: '36g',
+      fats: '14g',
+      inStock: true,
+      spiceLevel: 2,
+      rating: 4.7,
+    },
+    {
+      id: 'cx-28',
+      code: '28',
+      name: 'Mumbai Butter Pav Bhaji (2 Butter Pavs)',
+      category: 'SNACKS',
+      price: 70,
+      prepTime: '7 mins',
+      diet: 'veg',
+      tag: 'Campus Sensation',
+      description: 'Spicy mashed vegetable curry enriched with pure Amul butter, special Pav Bhaji masala, served with 2 golden pan-toasted butter pavs, fresh lemon wedges, and chopped red onions.',
+      image: 'https://images.unsplash.com/photo-1606491956689-2ea866880c84?auto=format&fit=crop&w=1200&q=85',
+      fallbackImage: 'https://images.unsplash.com/photo-1601050690597-df0568f70950?auto=format&fit=crop&w=1200&q=85',
+      calories: '420 kcal',
+      protein: '10g',
+      carbs: '56g',
+      fats: '18g',
+      inStock: true,
+      spiceLevel: 3,
+      rating: 4.9,
+      highlight: true,
+    },
+    {
+      id: 'cx-29',
+      code: '29',
+      name: 'Crispy Vegetable Spring Rolls with Sweet Chili (4 Pcs)',
+      category: 'SNACKS',
+      price: 55,
+      prepTime: '6 mins',
+      diet: 'veg',
+      tag: 'Golden Crispy',
+      description: 'Crispy golden pastry rolls packed with wok-tossed shredded cabbage, bell peppers, carrots, and sweet corn. Served hot with homemade sweet garlic chili dip.',
+      image: 'https://images.unsplash.com/photo-1548507297-c20ec26b52c0?auto=format&fit=crop&w=1200&q=85',
+      fallbackImage: 'https://images.unsplash.com/photo-1576107232684-1279f3908594?auto=format&fit=crop&w=1200&q=85',
+      calories: '280 kcal',
+      protein: '6g',
+      carbs: '38g',
+      fats: '12g',
+      inStock: true,
+      spiceLevel: 1,
+      rating: 4.7,
+    },
+    {
+      id: 'cx-30',
+      code: '30',
+      name: 'Crunchy Southern Spiced Chicken Popcorn',
+      category: 'SNACKS',
+      price: 80,
+      prepTime: '6 mins',
+      diet: 'non-veg',
+      tag: 'Crunch Blast',
+      description: 'Bite-sized boneless chicken morsels marinated in buttermilk and south-Indian curry leaf masala, breaded and fried to supreme crunch. Served with smoked garlic dip.',
+      image: 'https://images.unsplash.com/photo-1562967914-608f82629710?auto=format&fit=crop&w=1200&q=85',
+      fallbackImage: 'https://images.unsplash.com/photo-1576107232684-1279f3908594?auto=format&fit=crop&w=1200&q=85',
+      calories: '370 kcal',
+      protein: '24g',
+      carbs: '28g',
+      fats: '18g',
+      inStock: true,
+      spiceLevel: 3,
+      rating: 4.8,
+    },
+
+    // DRINKS (8 Items)
     {
       id: 'cx-11',
       code: '11',
@@ -255,8 +544,8 @@
       fallbackImage: 'https://images.unsplash.com/photo-1544787219-7f47ccb76574?auto=format&fit=crop&w=1200&q=85',
       calories: '110 kcal',
       protein: '4g',
-      carbs: '12g',
-      fats: '5g',
+      carbs: '14g',
+      fats: '4g',
       inStock: true,
       spiceLevel: 0,
       rating: 5.0,
@@ -275,8 +564,8 @@
       fallbackImage: 'https://images.unsplash.com/photo-1514432324607-a09d9b4aefdd?auto=format&fit=crop&w=1200&q=85',
       calories: '90 kcal',
       protein: '3g',
-      carbs: '11g',
-      fats: '4g',
+      carbs: '12g',
+      fats: '3g',
       inStock: true,
       spiceLevel: 1,
       rating: 4.9,
@@ -322,6 +611,88 @@
       rating: 4.7,
     },
     {
+      id: 'cx-31',
+      code: '31',
+      name: 'Chilled Royal Rose Milk with Sabja Seeds',
+      category: 'DRINKS',
+      price: 40,
+      prepTime: '3 mins',
+      diet: 'veg',
+      tag: 'Summer Classic',
+      description: 'Thick farm fresh chilled milk blended with aromatic rose petal syrup, floating soaked basil (sabja) seeds, and crushed ice for instant campus refreshment.',
+      image: 'https://images.unsplash.com/photo-1556881286-fc6915169721?auto=format&fit=crop&w=1200&q=85',
+      fallbackImage: 'https://images.unsplash.com/photo-1513558161293-cdaf765ed2fd?auto=format&fit=crop&w=1200&q=85',
+      calories: '160 kcal',
+      protein: '5g',
+      carbs: '24g',
+      fats: '5g',
+      inStock: true,
+      spiceLevel: 0,
+      rating: 4.8,
+    },
+    {
+      id: 'cx-32',
+      code: '32',
+      name: 'Alphonso Mango Lassi with Roasted Pistachios',
+      category: 'DRINKS',
+      price: 55,
+      prepTime: '3 mins',
+      diet: 'veg',
+      tag: 'Creamy Mango',
+      description: 'Velvety sweet yogurt churned with real Ratnagiri Alphonso mango pulp, a hint of cardamom, topped with chopped Iranian pistachios and saffron threads.',
+      image: 'https://images.unsplash.com/photo-1546173159-315724a31696?auto=format&fit=crop&w=1200&q=85',
+      fallbackImage: 'https://images.unsplash.com/photo-1517701550927-30cf4ba1dba5?auto=format&fit=crop&w=1200&q=85',
+      calories: '210 kcal',
+      protein: '7g',
+      carbs: '32g',
+      fats: '6g',
+      inStock: true,
+      spiceLevel: 0,
+      rating: 4.9,
+    },
+    {
+      id: 'cx-33',
+      code: '33',
+      name: 'Iced Lemon Peach Hibiscus Brew',
+      category: 'DRINKS',
+      price: 40,
+      prepTime: '3 mins',
+      diet: 'veg',
+      tag: 'Zero Guilt Cooler',
+      description: 'Cold-brewed organic crimson hibiscus flowers infused with white peach essence, squeezed lemon juice, and a splash of wild mountain honey over cracked ice.',
+      image: 'https://images.unsplash.com/photo-1513558161293-cdaf765ed2fd?auto=format&fit=crop&w=1200&q=85',
+      fallbackImage: 'https://images.unsplash.com/photo-1514432324607-a09d9b4aefdd?auto=format&fit=crop&w=1200&q=85',
+      calories: '60 kcal',
+      protein: '0g',
+      carbs: '14g',
+      fats: '0g',
+      inStock: true,
+      spiceLevel: 0,
+      rating: 4.7,
+    },
+    {
+      id: 'cx-34',
+      code: '34',
+      name: 'Warm Kesariya Badam Milk with Crushed Cashews',
+      category: 'DRINKS',
+      price: 45,
+      prepTime: '4 mins',
+      diet: 'veg',
+      tag: 'Nutritious Warmth',
+      description: 'Rich boiling milk infused with ground almond paste, Kashmiri saffron strands, cardamom powder, and garnished with roasted golden cashew bits.',
+      image: 'https://images.unsplash.com/photo-1544787219-7f47ccb76574?auto=format&fit=crop&w=1200&q=85',
+      fallbackImage: 'https://images.unsplash.com/photo-1514432324607-a09d9b4aefdd?auto=format&fit=crop&w=1200&q=85',
+      calories: '190 kcal',
+      protein: '8g',
+      carbs: '22g',
+      fats: '8g',
+      inStock: true,
+      spiceLevel: 0,
+      rating: 4.9,
+    },
+
+    // DESSERTS (4 Items)
+    {
       id: 'cx-15',
       code: '15',
       name: 'Sizzling Warm Belgian Walnut Brownie',
@@ -356,6 +727,46 @@
       calories: '240 kcal',
       protein: '5g',
       carbs: '26g',
+      fats: '13g',
+      inStock: true,
+      spiceLevel: 0,
+      rating: 4.8,
+    },
+    {
+      id: 'cx-35',
+      code: '35',
+      name: 'Hot Desi Ghee Gulab Jamun with Rabdi (2 Pcs)',
+      category: 'DESSERTS',
+      price: 55,
+      prepTime: '3 mins',
+      diet: 'veg',
+      tag: 'Pure Indulgence',
+      description: 'Soft golden fried mawa dumplings soaked in rose cardamom sugar syrup, served warm alongside a generous ladle of chilled slow-simmered rabdi.',
+      image: 'https://images.unsplash.com/photo-1589301760014-d929f3979dbc?auto=format&fit=crop&w=1200&q=85',
+      fallbackImage: 'https://images.unsplash.com/photo-1563805042-7684c019e1cb?auto=format&fit=crop&w=1200&q=85',
+      calories: '310 kcal',
+      protein: '6g',
+      carbs: '42g',
+      fats: '14g',
+      inStock: true,
+      spiceLevel: 0,
+      rating: 4.9,
+    },
+    {
+      id: 'cx-36',
+      code: '36',
+      name: 'Rich Saffron Gajar Ka Halwa with Mawa & Nuts',
+      category: 'DESSERTS',
+      price: 65,
+      prepTime: '3 mins',
+      diet: 'veg',
+      tag: 'Winter Specialty',
+      description: 'Slow-cooked grated Delhi carrots in pure country ghee and full-cream milk, sweetened with raw sugar, studded with roasted cashews, raisins, and crumbled mawa.',
+      image: 'https://images.unsplash.com/photo-1563805042-7684c019e1cb?auto=format&fit=crop&w=1200&q=85',
+      fallbackImage: 'https://images.unsplash.com/photo-1606313564200-e75d5e30476c?auto=format&fit=crop&w=1200&q=85',
+      calories: '290 kcal',
+      protein: '5g',
+      carbs: '38g',
       fats: '13g',
       inStock: true,
       spiceLevel: 0,
@@ -603,7 +1014,13 @@
   class Store {
     constructor() {
       this.listeners = new Set();
-      this.menu = this.load('cantenex_menu', INITIAL_MENU_ITEMS);
+      const savedMenu = this.load('cantenex_menu', null);
+      if (!savedMenu || savedMenu.length < INITIAL_MENU_ITEMS.length) {
+        this.menu = [...INITIAL_MENU_ITEMS];
+        this.save('cantenex_menu', this.menu);
+      } else {
+        this.menu = savedMenu;
+      }
       this.orders = this.load('cantenex_orders', INITIAL_ORDERS);
       this.reviews = this.load('cantenex_reviews', INITIAL_REVIEWS);
       this.cart = this.load('cantenex_cart', []);
@@ -1084,6 +1501,8 @@
      5. MAIN CONTROLLER & ALL BUTTON EVENT BINDINGS
      ========================================================================== */
   let activeCategory = 'ALL';
+  let activeDiet = 'ALL';
+  let activeSort = 'popular';
   let searchQuery = '';
   let pendingCheckoutData = null;
 
@@ -1095,6 +1514,7 @@
     renderTrackingView();
     renderAdminView();
     bindFiltersAndSearch();
+    bindQuickChips();
     bindCartEvents();
     bindCheckoutModal();
     bindAdminEvents();
@@ -1105,6 +1525,7 @@
     bindUPISimulator();
     bindReceiptPrint();
     bindKioskModal();
+    initKioskClock();
 
     store.subscribe((event) => {
       updateCartBadge();
@@ -1191,40 +1612,119 @@
       });
     });
 
-    const searchInput = document.getElementById('menu-search-input');
+    const searchInput = document.getElementById('menu-search-input') || document.getElementById('menu-search');
     if (searchInput) {
       searchInput.addEventListener('input', (e) => {
         searchQuery = e.target.value.toLowerCase().trim();
         renderMenu();
       });
     }
+
+    const dietPills = document.querySelectorAll('.diet-pill');
+    dietPills.forEach((pill) => {
+      pill.addEventListener('click', (e) => {
+        sounds.playClick();
+        dietPills.forEach((p) => p.classList.remove('active'));
+        e.currentTarget.classList.add('active');
+        activeDiet = e.currentTarget.getAttribute('data-diet');
+        renderMenu();
+      });
+    });
+
+    const sortSelect = document.getElementById('menu-sort');
+    if (sortSelect) {
+      sortSelect.addEventListener('change', (e) => {
+        sounds.playClick();
+        activeSort = e.target.value;
+        renderMenu();
+      });
+    }
+  }
+
+  function bindQuickChips() {
+    const chips = document.querySelectorAll('.quick-chip');
+    const searchInput = document.getElementById('menu-search-input') || document.getElementById('menu-search');
+    chips.forEach((chip) => {
+      chip.addEventListener('click', () => {
+        sounds.playClick();
+        const query = chip.getAttribute('data-query');
+        if (searchInput && query) {
+          searchInput.value = query;
+          searchQuery = query.toLowerCase();
+          renderMenu();
+          showToast('Trending Filter', `Showing campus results for "${query}"`, 'info');
+        }
+      });
+    });
   }
 
   function renderMenu() {
-    const container = document.getElementById('menu-catalogue-container');
+    const container = document.getElementById('menu-catalogue-container') || document.getElementById('menu-items-grid');
     if (!container) return;
 
-    let items = store.menu;
+    // Update dynamic category tab counts
+    const countAll = document.getElementById('count-all');
+    const countBreakfast = document.getElementById('count-breakfast');
+    const countMeals = document.getElementById('count-meals');
+    const countSnacks = document.getElementById('count-snacks');
+    const countDrinks = document.getElementById('count-drinks');
+    const countDesserts = document.getElementById('count-desserts');
 
+    if (countAll) countAll.innerText = store.menu.length;
+    if (countBreakfast) countBreakfast.innerText = store.menu.filter(i => i.category === 'BREAKFAST').length;
+    if (countMeals) countMeals.innerText = store.menu.filter(i => i.category === 'MEALS').length;
+    if (countSnacks) countSnacks.innerText = store.menu.filter(i => i.category === 'SNACKS').length;
+    if (countDrinks) countDrinks.innerText = store.menu.filter(i => i.category === 'DRINKS').length;
+    if (countDesserts) countDesserts.innerText = store.menu.filter(i => i.category === 'DESSERTS').length;
+
+    let items = [...store.menu];
+
+    // Category filter
     if (activeCategory !== 'ALL') {
       items = items.filter((item) => item.category === activeCategory);
     }
 
+    // Dietary filter
+    if (activeDiet !== 'ALL') {
+      items = items.filter((item) => item.diet === activeDiet);
+    }
+
+    // Search query filter
     if (searchQuery) {
       items = items.filter(
         (item) =>
           item.name.toLowerCase().includes(searchQuery) ||
           item.description.toLowerCase().includes(searchQuery) ||
           item.category.toLowerCase().includes(searchQuery) ||
-          item.tag.toLowerCase().includes(searchQuery)
+          (item.tag && item.tag.toLowerCase().includes(searchQuery))
       );
+    }
+
+    // Sorting
+    if (activeSort === 'price-asc') {
+      items.sort((a, b) => a.price - b.price);
+    } else if (activeSort === 'price-desc') {
+      items.sort((a, b) => b.price - a.price);
+    } else if (activeSort === 'rating') {
+      items.sort((a, b) => (b.rating || 0) - (a.rating || 0));
+    } else if (activeSort === 'prep') {
+      items.sort((a, b) => parseInt(a.prepTime || '10') - parseInt(b.prepTime || '10'));
+    } else {
+      // Default / popular: highlights first, then highest rating
+      items.sort((a, b) => (b.highlight ? 1 : 0) - (a.highlight ? 1 : 0) || (b.rating || 0) - (a.rating || 0));
+    }
+
+    // Update results counter
+    const resultsCountEl = document.getElementById('menu-results-count');
+    if (resultsCountEl) {
+      resultsCountEl.innerHTML = `Showing <strong>${items.length}</strong> campus dishes`;
     }
 
     if (items.length === 0) {
       container.innerHTML = `
         <div style="grid-column: 1 / -1; text-align: center; padding: 4rem 1rem; color: var(--text-dark-muted);">
           <p style="font-family: var(--font-display); font-size: 1.25rem; font-weight: 700; color: var(--text-dark-primary);">No Canteen Specialties Found</p>
-          <p style="font-size: 0.9rem; margin-top: 0.5rem;">Try adjusting your search query or dietary filter.</p>
+          <p style="font-size: 0.9rem; margin-top: 0.5rem;">Try adjusting your search query, dietary filter, or break category.</p>
         </div>
       `;
       return;
@@ -1232,54 +1732,39 @@
 
     let html = '';
     items.forEach((item) => {
-      if (item.highlight) {
-        html += `
-          <div class="menu-highlight-card" data-id="${item.id}">
-            <span class="highlight-ribbon">⭐ Bestseller (${item.rating} / 5.0)</span>
-            <div class="dish-thumb" data-action="open-spotlight" data-id="${item.id}" style="cursor: pointer;">
-              <span class="dish-diet-indicator ${item.diet}"></span>
-              <img src="${item.image}" alt="${item.name}" onerror="this.src='${item.fallbackImage}'" loading="lazy">
-            </div>
-            <div class="dish-details">
-              <div class="dish-top-meta">
-                <span class="dish-code">INDEX / ${item.code}</span>
-                <span class="dish-prep-time">⏱️ ${item.prepTime}</span>
-              </div>
-              <h3 class="dish-title" data-action="open-spotlight" data-id="${item.id}" style="cursor: pointer;">${item.name}</h3>
-              <p class="dish-desc-short">${item.description}</p>
-              <div class="dish-bottom-bar">
-                <div class="dish-price-tag">₹${item.price}</div>
-                <button class="btn-add-tray ${!item.inStock ? 'sold-out' : ''}" data-action="add-item" data-id="${item.id}" ${!item.inStock ? 'disabled' : ''}>
-                  ${item.inStock ? `Add To Tray` : `Sold Out`}
-                </button>
-              </div>
-            </div>
+      const spiceIndicator = item.spiceLevel > 0 ? `<span class="dish-spice-indicator" title="Spice level: ${item.spiceLevel}">${'🌶️'.repeat(item.spiceLevel)}</span>` : '';
+      const tagBadge = item.tag ? `<span class="dish-tag-badge">${item.tag}</span>` : '';
+
+      html += `
+        <div class="menu-item-row" data-id="${item.id}">
+          <div class="dish-thumb" data-action="open-spotlight" data-id="${item.id}" style="cursor: pointer;">
+            <span class="dish-diet-indicator ${item.diet}"></span>
+            <img src="${item.image}" alt="${item.name}" onerror="this.src='${item.fallbackImage}'" loading="lazy">
           </div>
-        `;
-      } else {
-        html += `
-          <div class="menu-item-row" data-id="${item.id}">
-            <div class="dish-thumb" data-action="open-spotlight" data-id="${item.id}" style="cursor: pointer;">
-              <span class="dish-diet-indicator ${item.diet}"></span>
-              <img src="${item.image}" alt="${item.name}" onerror="this.src='${item.fallbackImage}'" loading="lazy">
-            </div>
-            <div class="dish-details">
+          <div class="dish-details">
+            <div>
               <div class="dish-top-meta">
                 <span class="dish-code">#${item.code}</span>
-                <span class="dish-prep-time">⏱️ ${item.prepTime}</span>
+                <span class="dish-prep-time">⏱️ ${item.prepTime} • ⭐ ${item.rating || 5.0}</span>
               </div>
+              ${tagBadge}
               <h3 class="dish-title" data-action="open-spotlight" data-id="${item.id}" style="cursor: pointer;">${item.name}</h3>
               <p class="dish-desc-short">${item.description}</p>
-              <div class="dish-bottom-bar">
-                <span class="dish-price-tag">₹${item.price}</span>
-                <button class="btn-add-tray ${!item.inStock ? 'sold-out' : ''}" data-action="add-item" data-id="${item.id}" ${!item.inStock ? 'disabled' : ''}>
-                  ${item.inStock ? `+ Add` : `Sold Out`}
-                </button>
+              <div class="dish-card-quick-meta">
+                <span class="dish-macro-pill">${item.calories || '300 kcal'}</span>
+                <span class="dish-macro-pill">${item.protein || '8g'} Protein</span>
+                ${spiceIndicator}
               </div>
             </div>
+            <div class="dish-bottom-bar">
+              <span class="dish-price-tag">₹${item.price}</span>
+              <button class="btn-add-tray ${!item.inStock ? 'sold-out' : ''}" data-action="add-item" data-id="${item.id}" ${!item.inStock ? 'disabled' : ''}>
+                ${item.inStock ? `+ Add To Tray` : `Sold Out`}
+              </button>
+            </div>
           </div>
-        `;
-      }
+        </div>
+      `;
     });
 
     container.innerHTML = html;
@@ -1293,6 +1778,7 @@
           sounds.playAdd();
           store.addToCart(item);
           triggerAddAnimation(e.currentTarget);
+          showToast('Added to Tray', `${item.name} (₹${item.price}) added`, 'success');
         }
       });
     });
@@ -1422,6 +1908,7 @@
           rating: selectedSpotlightRating,
           comment,
         });
+        showToast('Review Submitted', `Thank you for reviewing ${item.name}!`, 'success');
         openDishSpotlight(item); // Re-render spotlight with new review
       });
     }
@@ -1436,6 +1923,7 @@
         sounds.playAdd();
         store.addToCart(item);
         triggerAddAnimation(e.currentTarget);
+        showToast('Added to Tray', `${item.name} (₹${item.price}) added`, 'success');
         setTimeout(() => modal.classList.remove('active'), 500);
       }
     });
@@ -1474,6 +1962,45 @@
     }
   }
 
+  function showToast(title, msg, type = 'info') {
+    const container = document.getElementById('toast-container');
+    if (!container) return;
+
+    const icons = {
+      success: '✓',
+      info: '💡',
+      error: '✕',
+      tray: '🍱'
+    };
+
+    const toast = document.createElement('div');
+    toast.className = `toast-item ${type}`;
+    toast.innerHTML = `
+      <div class="toast-icon">${icons[type] || '✨'}</div>
+      <div class="toast-text">
+        <div class="toast-title">${title}</div>
+        <div class="toast-msg">${msg}</div>
+      </div>
+      <button class="toast-close" aria-label="Dismiss">✕</button>
+    `;
+
+    container.appendChild(toast);
+
+    requestAnimationFrame(() => {
+      toast.classList.add('show');
+    });
+
+    const dismiss = () => {
+      toast.classList.remove('show');
+      setTimeout(() => {
+        if (toast.parentNode) toast.parentNode.removeChild(toast);
+      }, 320);
+    };
+
+    toast.querySelector('.toast-close').addEventListener('click', dismiss);
+    setTimeout(dismiss, 3500);
+  }
+
   function bindCartEvents() {
     const trigger = document.getElementById('btn-open-cart');
     const overlay = document.getElementById('cart-overlay');
@@ -1510,6 +2037,16 @@
         openCheckoutModal();
       });
     }
+
+    const clearBtn = document.getElementById('btn-clear-tray-action');
+    if (clearBtn) {
+      clearBtn.addEventListener('click', () => {
+        if (store.cart.length === 0) return;
+        sounds.playClick();
+        store.clearCart();
+        showToast('Tray Cleared', 'All items removed from your tray', 'info');
+      });
+    }
   }
 
   function renderCartDrawer() {
@@ -1532,7 +2069,11 @@
       };
     }
 
+    const estimateBanner = document.getElementById('cart-prep-estimate-banner');
+    const estimateText = document.getElementById('cart-prep-time-text');
+
     if (store.cart.length === 0) {
+      if (estimateBanner) estimateBanner.style.display = 'none';
       itemsContainer.innerHTML = `
         <div style="text-align: center; padding: 4rem 1rem; color: var(--text-light-muted);">
           <p style="font-family: var(--font-display); font-size: 1.1rem; text-transform: uppercase; color: var(--text-light-secondary); margin-bottom: 0.5rem;">Your Tray Is Empty</p>
@@ -1546,6 +2087,14 @@
         checkoutBtn.style.opacity = '0.5';
       }
       return;
+    }
+
+    if (estimateBanner && estimateText) {
+      estimateBanner.style.display = 'flex';
+      const prepMinutes = store.cart.map((i) => parseInt(i.prepTime || '8', 10));
+      const maxPrep = Math.max(...prepMinutes, 5);
+      const totalQty = store.cart.reduce((s, i) => s + i.quantity, 0);
+      estimateText.innerText = `Estimated Kitchen Express Prep: ~${maxPrep} Mins (${totalQty} Items)`;
     }
 
     if (checkoutBtn) {
@@ -1765,6 +2314,7 @@
     if (checkoutModal) checkoutModal.classList.remove('active');
 
     showConfirmationScreen(order);
+    showToast('Order Transmitted!', `Token #${order.id} generated for ${order.pickupSlot}`, 'success');
   }
 
   function showConfirmationScreen(order) {
@@ -1938,6 +2488,21 @@
         toggleAdminView();
       });
     }
+
+    const searchInput = document.getElementById('admin-inventory-search');
+    if (searchInput) {
+      searchInput.addEventListener('input', () => {
+        renderAdminMenuTable();
+      });
+    }
+
+    const catSelect = document.getElementById('admin-inventory-cat');
+    if (catSelect) {
+      catSelect.addEventListener('change', () => {
+        sounds.playClick();
+        renderAdminMenuTable();
+      });
+    }
   }
 
   function renderAdminView() {
@@ -2016,6 +2581,7 @@
         const orderId = e.currentTarget.getAttribute('data-id');
         const nextStatus = e.currentTarget.getAttribute('data-next');
         store.updateOrderStatus(orderId, nextStatus);
+        showToast('Order Status Updated', `Token ${orderId} moved to ${nextStatus}`, 'info');
       });
     });
   }
@@ -2024,7 +2590,31 @@
     const tbody = document.getElementById('admin-menu-tbody');
     if (!tbody) return;
 
-    tbody.innerHTML = store.menu.map((item) => `
+    const searchInput = document.getElementById('admin-inventory-search');
+    const catSelect = document.getElementById('admin-inventory-cat');
+
+    const q = (searchInput?.value || '').trim().toLowerCase();
+    const cat = catSelect?.value || 'ALL';
+
+    let filtered = [...store.menu];
+    if (cat !== 'ALL') {
+      filtered = filtered.filter((i) => i.category === cat);
+    }
+    if (q) {
+      filtered = filtered.filter(
+        (i) =>
+          i.name.toLowerCase().includes(q) ||
+          i.code.toLowerCase().includes(q) ||
+          i.category.toLowerCase().includes(q)
+      );
+    }
+
+    if (filtered.length === 0) {
+      tbody.innerHTML = `<tr><td colspan="4" style="text-align: center; padding: 2rem; color: var(--text-light-muted);">No inventory items match your filter criteria.</td></tr>`;
+      return;
+    }
+
+    tbody.innerHTML = filtered.map((item) => `
       <tr>
         <td style="font-family: var(--font-display); font-weight: 700; color: #fff;">#${item.code}</td>
         <td style="display: flex; align-items: center; gap: 0.75rem;">
@@ -2053,6 +2643,14 @@
         sounds.playClick();
         const id = e.currentTarget.getAttribute('data-id');
         store.toggleItemStock(id);
+        const item = store.menu.find((i) => i.id === id);
+        if (item) {
+          showToast(
+            item.inStock ? 'Stock Restored' : 'Item Sold Out',
+            `${item.name} is now ${item.inStock ? 'available in canteen' : 'marked sold out'}`,
+            item.inStock ? 'success' : 'info'
+          );
+        }
       });
     });
 
@@ -2061,7 +2659,11 @@
         sounds.playClick();
         const id = e.target.getAttribute('data-id');
         const val = Number(e.target.value);
-        if (val > 0) store.updateItemPrice(id, val);
+        if (val > 0) {
+          store.updateItemPrice(id, val);
+          const item = store.menu.find((i) => i.id === id);
+          showToast('Price Updated', `${item?.name || 'Item'} price set to ₹${val}`, 'info');
+        }
       });
     });
   }
@@ -2085,6 +2687,17 @@
         kioskModal.classList.remove('active');
       });
     }
+  }
+
+  function initKioskClock() {
+    const clockEl = document.getElementById('kiosk-clock');
+    if (!clockEl) return;
+    const update = () => {
+      const now = new Date();
+      clockEl.innerText = now.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit', second: '2-digit' });
+    };
+    update();
+    setInterval(update, 1000);
   }
 
   function renderKioskBoard() {
@@ -2281,11 +2894,12 @@
     const heroSpecialAdd = document.getElementById('btn-special-add-tray');
     if (heroSpecialAdd) {
       heroSpecialAdd.addEventListener('click', () => {
-        const specialItem = store.menu.find((i) => i.featuredSpecial) || store.menu[3];
+        const specialItem = store.menu.find((i) => i.featuredSpecial) || store.menu.find((i) => i.id === 'cx-04') || store.menu[3];
         if (specialItem) {
           sounds.playAdd();
           store.addToCart(specialItem);
           triggerAddAnimation(heroSpecialAdd);
+          showToast('Chef\'s Special Added', `${specialItem.name} added to your tray!`, 'success');
         }
       });
     }

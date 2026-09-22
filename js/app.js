@@ -8,6 +8,8 @@ import { init3DDepth } from './depth3d.js';
 import { PICKUP_SLOTS, DEPARTMENTS } from './data.js';
 
 let activeCategory = 'ALL';
+let activeDiet = 'ALL';
+let activeSort = 'popular';
 let searchQuery = '';
 let pendingCheckoutData = null;
 let selectedSpotlightRating = 5;
@@ -25,6 +27,7 @@ function initApp() {
   renderTrackingView();
   renderAdminView();
   bindFiltersAndSearch();
+  bindQuickChips();
   bindCartEvents();
   bindCheckoutModal();
   bindAdminEvents();
@@ -35,6 +38,7 @@ function initApp() {
   bindUPISimulator();
   bindReceiptPrint();
   bindKioskModal();
+  initKioskClock();
 
   store.subscribe((event) => {
     updateCartBadge();
@@ -121,40 +125,119 @@ function bindFiltersAndSearch() {
     });
   });
 
-  const searchInput = document.getElementById('menu-search-input');
+  const searchInput = document.getElementById('menu-search-input') || document.getElementById('menu-search');
   if (searchInput) {
     searchInput.addEventListener('input', (e) => {
       searchQuery = e.target.value.toLowerCase().trim();
       renderMenu();
     });
   }
+
+  const dietPills = document.querySelectorAll('.diet-pill');
+  dietPills.forEach((pill) => {
+    pill.addEventListener('click', (e) => {
+      sounds.playClick();
+      dietPills.forEach((p) => p.classList.remove('active'));
+      e.currentTarget.classList.add('active');
+      activeDiet = e.currentTarget.getAttribute('data-diet');
+      renderMenu();
+    });
+  });
+
+  const sortSelect = document.getElementById('menu-sort');
+  if (sortSelect) {
+    sortSelect.addEventListener('change', (e) => {
+      sounds.playClick();
+      activeSort = e.target.value;
+      renderMenu();
+    });
+  }
+}
+
+function bindQuickChips() {
+  const chips = document.querySelectorAll('.quick-chip');
+  const searchInput = document.getElementById('menu-search-input') || document.getElementById('menu-search');
+  chips.forEach((chip) => {
+    chip.addEventListener('click', () => {
+      sounds.playClick();
+      const query = chip.getAttribute('data-query');
+      if (searchInput && query) {
+        searchInput.value = query;
+        searchQuery = query.toLowerCase();
+        renderMenu();
+        showToast('Trending Filter', `Showing campus results for "${query}"`, 'info');
+      }
+    });
+  });
 }
 
 function renderMenu() {
-  const container = document.getElementById('menu-catalogue-container');
+  const container = document.getElementById('menu-catalogue-container') || document.getElementById('menu-items-grid');
   if (!container) return;
 
-  let items = store.menu;
+  // Update dynamic category tab counts
+  const countAll = document.getElementById('count-all');
+  const countBreakfast = document.getElementById('count-breakfast');
+  const countMeals = document.getElementById('count-meals');
+  const countSnacks = document.getElementById('count-snacks');
+  const countDrinks = document.getElementById('count-drinks');
+  const countDesserts = document.getElementById('count-desserts');
 
+  if (countAll) countAll.innerText = store.menu.length;
+  if (countBreakfast) countBreakfast.innerText = store.menu.filter(i => i.category === 'BREAKFAST').length;
+  if (countMeals) countMeals.innerText = store.menu.filter(i => i.category === 'MEALS').length;
+  if (countSnacks) countSnacks.innerText = store.menu.filter(i => i.category === 'SNACKS').length;
+  if (countDrinks) countDrinks.innerText = store.menu.filter(i => i.category === 'DRINKS').length;
+  if (countDesserts) countDesserts.innerText = store.menu.filter(i => i.category === 'DESSERTS').length;
+
+  let items = [...store.menu];
+
+  // Category filter
   if (activeCategory !== 'ALL') {
     items = items.filter((item) => item.category === activeCategory);
   }
 
+  // Dietary filter
+  if (activeDiet !== 'ALL') {
+    items = items.filter((item) => item.diet === activeDiet);
+  }
+
+  // Search query filter
   if (searchQuery) {
     items = items.filter(
       (item) =>
         item.name.toLowerCase().includes(searchQuery) ||
         item.description.toLowerCase().includes(searchQuery) ||
         item.category.toLowerCase().includes(searchQuery) ||
-        item.tag.toLowerCase().includes(searchQuery)
+        (item.tag && item.tag.toLowerCase().includes(searchQuery))
     );
+  }
+
+  // Sorting
+  if (activeSort === 'price-asc') {
+    items.sort((a, b) => a.price - b.price);
+  } else if (activeSort === 'price-desc') {
+    items.sort((a, b) => b.price - a.price);
+  } else if (activeSort === 'rating') {
+    items.sort((a, b) => (b.rating || 0) - (a.rating || 0));
+  } else if (activeSort === 'prep') {
+    items.sort((a, b) => parseInt(a.prepTime || '10') - parseInt(b.prepTime || '10'));
+  } else {
+    // Default / popular: highlights first, then highest rating
+    items.sort((a, b) => (b.highlight ? 1 : 0) - (a.highlight ? 1 : 0) || (b.rating || 0) - (a.rating || 0));
+  }
+
+  // Update results counter
+  const resultsCountEl = document.getElementById('menu-results-count');
+  if (resultsCountEl) {
+    resultsCountEl.innerHTML = `Showing <strong>${items.length}</strong> campus dishes`;
   }
 
   if (items.length === 0) {
     container.innerHTML = `
       <div style="grid-column: 1 / -1; text-align: center; padding: 4rem 1rem; color: var(--text-dark-muted);">
         <p style="font-family: var(--font-display); font-size: 1.25rem; font-weight: 700; color: var(--text-dark-primary);">No Canteen Specialties Found</p>
-        <p style="font-size: 0.9rem; margin-top: 0.5rem;">Try adjusting your search query or dietary filter.</p>
+        <p style="font-size: 0.9rem; margin-top: 0.5rem;">Try adjusting your search query, dietary filter, or break category.</p>
       </div>
     `;
     return;
@@ -162,54 +245,39 @@ function renderMenu() {
 
   let html = '';
   items.forEach((item) => {
-    if (item.highlight) {
-      html += `
-        <div class="menu-highlight-card" data-id="${item.id}">
-          <span class="highlight-ribbon">⭐ Bestseller (${item.rating} / 5.0)</span>
-          <div class="dish-thumb" data-action="open-spotlight" data-id="${item.id}" style="cursor: pointer;">
-            <span class="dish-diet-indicator ${item.diet}"></span>
-            <img src="${item.image}" alt="${item.name}" onerror="this.src='${item.fallbackImage}'" loading="lazy">
-          </div>
-          <div class="dish-details">
-            <div class="dish-top-meta">
-              <span class="dish-code">INDEX / ${item.code}</span>
-              <span class="dish-prep-time">⏱️ ${item.prepTime}</span>
-            </div>
-            <h3 class="dish-title" data-action="open-spotlight" data-id="${item.id}" style="cursor: pointer;">${item.name}</h3>
-            <p class="dish-desc-short">${item.description}</p>
-            <div class="dish-bottom-bar">
-              <div class="dish-price-tag">₹${item.price}</div>
-              <button class="btn-add-tray ${!item.inStock ? 'sold-out' : ''}" data-action="add-item" data-id="${item.id}" ${!item.inStock ? 'disabled' : ''}>
-                ${item.inStock ? `Add To Tray` : `Sold Out`}
-              </button>
-            </div>
-          </div>
+    const spiceIndicator = item.spiceLevel > 0 ? `<span class="dish-spice-indicator" title="Spice level: ${item.spiceLevel}">${'🌶️'.repeat(item.spiceLevel)}</span>` : '';
+    const tagBadge = item.tag ? `<span class="dish-tag-badge">${item.tag}</span>` : '';
+
+    html += `
+      <div class="menu-item-row" data-id="${item.id}">
+        <div class="dish-thumb" data-action="open-spotlight" data-id="${item.id}" style="cursor: pointer;">
+          <span class="dish-diet-indicator ${item.diet}"></span>
+          <img src="${item.image}" alt="${item.name}" onerror="this.src='${item.fallbackImage}'" loading="lazy">
         </div>
-      `;
-    } else {
-      html += `
-        <div class="menu-item-row" data-id="${item.id}">
-          <div class="dish-thumb" data-action="open-spotlight" data-id="${item.id}" style="cursor: pointer;">
-            <span class="dish-diet-indicator ${item.diet}"></span>
-            <img src="${item.image}" alt="${item.name}" onerror="this.src='${item.fallbackImage}'" loading="lazy">
-          </div>
-          <div class="dish-details">
+        <div class="dish-details">
+          <div>
             <div class="dish-top-meta">
               <span class="dish-code">#${item.code}</span>
-              <span class="dish-prep-time">⏱️ ${item.prepTime}</span>
+              <span class="dish-prep-time">⏱️ ${item.prepTime} • ⭐ ${item.rating || 5.0}</span>
             </div>
+            ${tagBadge}
             <h3 class="dish-title" data-action="open-spotlight" data-id="${item.id}" style="cursor: pointer;">${item.name}</h3>
             <p class="dish-desc-short">${item.description}</p>
-            <div class="dish-bottom-bar">
-              <span class="dish-price-tag">₹${item.price}</span>
-              <button class="btn-add-tray ${!item.inStock ? 'sold-out' : ''}" data-action="add-item" data-id="${item.id}" ${!item.inStock ? 'disabled' : ''}>
-                ${item.inStock ? `+ Add` : `Sold Out`}
-              </button>
+            <div class="dish-card-quick-meta">
+              <span class="dish-macro-pill">${item.calories || '300 kcal'}</span>
+              <span class="dish-macro-pill">${item.protein || '8g'} Protein</span>
+              ${spiceIndicator}
             </div>
           </div>
+          <div class="dish-bottom-bar">
+            <span class="dish-price-tag">₹${item.price}</span>
+            <button class="btn-add-tray ${!item.inStock ? 'sold-out' : ''}" data-action="add-item" data-id="${item.id}" ${!item.inStock ? 'disabled' : ''}>
+              ${item.inStock ? `+ Add To Tray` : `Sold Out`}
+            </button>
+          </div>
         </div>
-      `;
-    }
+      </div>
+    `;
   });
 
   container.innerHTML = html;
@@ -223,6 +291,7 @@ function renderMenu() {
         sounds.playAdd();
         store.addToCart(item);
         triggerAddAnimation(e.currentTarget);
+        showToast('Added to Tray', `${item.name} (₹${item.price}) added`, 'success');
       }
     });
   });
@@ -348,6 +417,7 @@ function openDishSpotlight(item) {
         rating: selectedSpotlightRating,
         comment,
       });
+      showToast('Review Submitted', `Thank you for reviewing ${item.name}!`, 'success');
       openDishSpotlight(item);
     });
   }
@@ -362,6 +432,7 @@ function openDishSpotlight(item) {
       sounds.playAdd();
       store.addToCart(item);
       triggerAddAnimation(e.currentTarget);
+      showToast('Added to Tray', `${item.name} (₹${item.price}) added`, 'success');
       setTimeout(() => modal.classList.remove('active'), 500);
     }
   });
@@ -400,6 +471,45 @@ function updateCartBadge() {
   }
 }
 
+function showToast(title, msg, type = 'info') {
+  const container = document.getElementById('toast-container');
+  if (!container) return;
+
+  const icons = {
+    success: '✓',
+    info: '💡',
+    error: '✕',
+    tray: '🍱'
+  };
+
+  const toast = document.createElement('div');
+  toast.className = `toast-item ${type}`;
+  toast.innerHTML = `
+    <div class="toast-icon">${icons[type] || '✨'}</div>
+    <div class="toast-text">
+      <div class="toast-title">${title}</div>
+      <div class="toast-msg">${msg}</div>
+    </div>
+    <button class="toast-close" aria-label="Dismiss">✕</button>
+  `;
+
+  container.appendChild(toast);
+
+  requestAnimationFrame(() => {
+    toast.classList.add('show');
+  });
+
+  const dismiss = () => {
+    toast.classList.remove('show');
+    setTimeout(() => {
+      if (toast.parentNode) toast.parentNode.removeChild(toast);
+    }, 320);
+  };
+
+  toast.querySelector('.toast-close').addEventListener('click', dismiss);
+  setTimeout(dismiss, 3500);
+}
+
 function bindCartEvents() {
   const trigger = document.getElementById('btn-open-cart');
   const overlay = document.getElementById('cart-overlay');
@@ -436,6 +546,16 @@ function bindCartEvents() {
       openCheckoutModal();
     });
   }
+
+  const clearBtn = document.getElementById('btn-clear-tray-action');
+  if (clearBtn) {
+    clearBtn.addEventListener('click', () => {
+      if (store.cart.length === 0) return;
+      sounds.playClick();
+      store.clearCart();
+      showToast('Tray Cleared', 'All items removed from your tray', 'info');
+    });
+  }
 }
 
 function renderCartDrawer() {
@@ -458,7 +578,11 @@ function renderCartDrawer() {
     };
   }
 
+  const estimateBanner = document.getElementById('cart-prep-estimate-banner');
+  const estimateText = document.getElementById('cart-prep-time-text');
+
   if (store.cart.length === 0) {
+    if (estimateBanner) estimateBanner.style.display = 'none';
     itemsContainer.innerHTML = `
       <div style="text-align: center; padding: 4rem 1rem; color: var(--text-light-muted);">
         <p style="font-family: var(--font-display); font-size: 1.1rem; text-transform: uppercase; color: var(--text-light-secondary); margin-bottom: 0.5rem;">Your Tray Is Empty</p>
@@ -472,6 +596,14 @@ function renderCartDrawer() {
       checkoutBtn.style.opacity = '0.5';
     }
     return;
+  }
+
+  if (estimateBanner && estimateText) {
+    estimateBanner.style.display = 'flex';
+    const prepMinutes = store.cart.map((i) => parseInt(i.prepTime || '8', 10));
+    const maxPrep = Math.max(...prepMinutes, 5);
+    const totalQty = store.cart.reduce((s, i) => s + i.quantity, 0);
+    estimateText.innerText = `Estimated Kitchen Express Prep: ~${maxPrep} Mins (${totalQty} Items)`;
   }
 
   if (checkoutBtn) {
@@ -691,6 +823,7 @@ function finalizeOrderPlacement() {
   if (checkoutModal) checkoutModal.classList.remove('active');
 
   showConfirmationScreen(order);
+  showToast('Order Transmitted!', `Token #${order.id} generated for ${order.pickupSlot}`, 'success');
 }
 
 function showConfirmationScreen(order) {
@@ -864,6 +997,21 @@ function bindAdminEvents() {
       toggleAdminView();
     });
   }
+
+  const searchInput = document.getElementById('admin-inventory-search');
+  if (searchInput) {
+    searchInput.addEventListener('input', () => {
+      renderAdminMenuTable();
+    });
+  }
+
+  const catSelect = document.getElementById('admin-inventory-cat');
+  if (catSelect) {
+    catSelect.addEventListener('change', () => {
+      sounds.playClick();
+      renderAdminMenuTable();
+    });
+  }
 }
 
 function renderAdminView() {
@@ -942,6 +1090,7 @@ function renderAdminOrdersTable() {
       const orderId = e.currentTarget.getAttribute('data-id');
       const nextStatus = e.currentTarget.getAttribute('data-next');
       store.updateOrderStatus(orderId, nextStatus);
+      showToast('Order Status Updated', `Token ${orderId} moved to ${nextStatus}`, 'info');
     });
   });
 }
@@ -950,7 +1099,31 @@ function renderAdminMenuTable() {
   const tbody = document.getElementById('admin-menu-tbody');
   if (!tbody) return;
 
-  tbody.innerHTML = store.menu.map((item) => `
+  const searchInput = document.getElementById('admin-inventory-search');
+  const catSelect = document.getElementById('admin-inventory-cat');
+
+  const q = (searchInput?.value || '').trim().toLowerCase();
+  const cat = catSelect?.value || 'ALL';
+
+  let filtered = [...store.menu];
+  if (cat !== 'ALL') {
+    filtered = filtered.filter((i) => i.category === cat);
+  }
+  if (q) {
+    filtered = filtered.filter(
+      (i) =>
+        i.name.toLowerCase().includes(q) ||
+        i.code.toLowerCase().includes(q) ||
+        i.category.toLowerCase().includes(q)
+    );
+  }
+
+  if (filtered.length === 0) {
+    tbody.innerHTML = `<tr><td colspan="4" style="text-align: center; padding: 2rem; color: var(--text-light-muted);">No inventory items match your filter criteria.</td></tr>`;
+    return;
+  }
+
+  tbody.innerHTML = filtered.map((item) => `
     <tr>
       <td style="font-family: var(--font-display); font-weight: 700; color: #fff;">#${item.code}</td>
       <td style="display: flex; align-items: center; gap: 0.75rem;">
@@ -979,6 +1152,14 @@ function renderAdminMenuTable() {
       sounds.playClick();
       const id = e.currentTarget.getAttribute('data-id');
       store.toggleItemStock(id);
+      const item = store.menu.find((i) => i.id === id);
+      if (item) {
+        showToast(
+          item.inStock ? 'Stock Restored' : 'Item Sold Out',
+          `${item.name} is now ${item.inStock ? 'available in canteen' : 'marked sold out'}`,
+          item.inStock ? 'success' : 'info'
+        );
+      }
     });
   });
 
@@ -987,7 +1168,11 @@ function renderAdminMenuTable() {
       sounds.playClick();
       const id = e.target.getAttribute('data-id');
       const val = Number(e.target.value);
-      if (val > 0) store.updateItemPrice(id, val);
+      if (val > 0) {
+        store.updateItemPrice(id, val);
+        const item = store.menu.find((i) => i.id === id);
+        showToast('Price Updated', `${item?.name || 'Item'} price set to ₹${val}`, 'info');
+      }
     });
   });
 }
@@ -1011,6 +1196,17 @@ function bindKioskModal() {
       kioskModal.classList.remove('active');
     });
   }
+}
+
+function initKioskClock() {
+  const clockEl = document.getElementById('kiosk-clock');
+  if (!clockEl) return;
+  const update = () => {
+    const now = new Date();
+    clockEl.innerText = now.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit', second: '2-digit' });
+  };
+  update();
+  setInterval(update, 1000);
 }
 
 function renderKioskBoard() {
@@ -1205,11 +1401,12 @@ function bindLegalModals() {
   const heroSpecialAdd = document.getElementById('btn-special-add-tray');
   if (heroSpecialAdd) {
     heroSpecialAdd.addEventListener('click', () => {
-      const specialItem = store.menu.find((i) => i.featuredSpecial) || store.menu[3];
+      const specialItem = store.menu.find((i) => i.featuredSpecial) || store.menu.find((i) => i.id === 'cx-04') || store.menu[3];
       if (specialItem) {
         sounds.playAdd();
         store.addToCart(specialItem);
         triggerAddAnimation(heroSpecialAdd);
+        showToast('Chef\'s Special Added', `${specialItem.name} added to your tray!`, 'success');
       }
     });
   }

@@ -209,29 +209,64 @@
             </div>
             <div class="menu-search-wrapper">
               <svg class="menu-search-icon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.3-4.3"/></svg>
-              <input type="text" id="menu-search" class="menu-search-input" placeholder="Search dosa, biryani, coffee...">
+              <input type="text" id="menu-search-input" class="menu-search-input" placeholder="Search dosa, biryani, pav bhaji, coffee, rolls...">
             </div>
           </div>
 
-          <!-- Category Filter Tabs -->
+          <!-- Quick Trending Search Chips -->
+          <div class="quick-chips-container" id="quick-chips-container">
+            <span style="font-size: 0.72rem; font-weight: 700; color: var(--text-dark-muted); text-transform: uppercase;">Trending:</span>
+            <button class="quick-chip" data-query="Biryani">🔥 Dum Biryani</button>
+            <button class="quick-chip" data-query="Dosa">🥞 Podi Dosa</button>
+            <button class="quick-chip" data-query="Coffee">☕ Filter Coffee</button>
+            <button class="quick-chip" data-query="Roll">🌯 Kathi Roll</button>
+            <button class="quick-chip" data-query="Pav Bhaji">🍞 Pav Bhaji</button>
+            <button class="quick-chip" data-query="Lassi">🥭 Mango Lassi</button>
+            <button class="quick-chip" data-query="Chai">🍵 Kulhad Chai</button>
+          </div>
+
+          <!-- Category Filter Tabs with Live Dish Counts -->
           <div class="filter-bar-container">
-            <div class="category-tabs">
-              <button class="tab-pill active" data-category="ALL">All Items</button>
-              <button class="tab-pill" data-category="BREAKFAST">Morning Tiffin</button>
-              <button class="tab-pill" data-category="MEALS">Lunch & Bowls</button>
-              <button class="tab-pill" data-category="SNACKS">Quick Bites</button>
-              <button class="tab-pill" data-category="DRINKS">Brews & Coolers</button>
-              <button class="tab-pill" data-category="DESSERTS">Sweet Finishes</button>
+            <div class="category-tabs" id="category-tabs-container">
+              <button class="tab-pill active" data-category="ALL">All Items <span class="tab-count-badge" id="count-all">36</span></button>
+              <button class="tab-pill" data-category="BREAKFAST">Morning Tiffin <span class="tab-count-badge" id="count-breakfast">7</span></button>
+              <button class="tab-pill" data-category="MEALS">Lunch & Bowls <span class="tab-count-badge" id="count-meals">9</span></button>
+              <button class="tab-pill" data-category="SNACKS">Quick Bites <span class="tab-count-badge" id="count-snacks">8</span></button>
+              <button class="tab-pill" data-category="DRINKS">Brews & Coolers <span class="tab-count-badge" id="count-drinks">8</span></button>
+              <button class="tab-pill" data-category="DESSERTS">Sweet Finishes <span class="tab-count-badge" id="count-desserts">4</span></button>
             </div>
-            <div style="font-size: 0.78rem; font-weight: 700; color: var(--text-dark-secondary);">
-              🟢 Pure Veg &nbsp; 🔴 Non-Veg
+          </div>
+
+          <!-- Secondary Production Controls: Dietary Pills, Sorting & Counter -->
+          <div class="menu-controls-row">
+            <div class="dietary-filter-group" id="dietary-filter-group">
+              <button class="diet-pill active" data-diet="ALL">All Specialties</button>
+              <button class="diet-pill" data-diet="veg"><span class="diet-dot veg"></span> Pure Veg</button>
+              <button class="diet-pill" data-diet="non-veg"><span class="diet-dot non-veg"></span> Non-Veg</button>
+            </div>
+
+            <div style="display: flex; align-items: center; gap: 1.25rem; flex-wrap: wrap;">
+              <div class="menu-sort-wrapper">
+                <span class="menu-sort-label">Sort:</span>
+                <select id="menu-sort" class="menu-sort-select">
+                  <option value="popular">⭐ Recommended & Bestsellers</option>
+                  <option value="price-asc">Price: Low to High (₹)</option>
+                  <option value="price-desc">Price: High to Low (₹)</option>
+                  <option value="rating">Highest Rated (4.8+)</option>
+                  <option value="prep">⚡ Fastest Kitchen Prep</option>
+                </select>
+              </div>
+
+              <div id="menu-results-count" class="menu-results-count">
+                Showing <strong>36</strong> campus dishes
+              </div>
             </div>
           </div>
         </div>
 
         <!-- Alternating Editorial Menu Items Grid -->
-        <div id="menu-items-grid" class="menu-editorial-grid">
-          <!-- Populated dynamically by app.js -->
+        <div id="menu-catalogue-container" class="menu-editorial-grid">
+          <!-- Populated dynamically by bundle.js -->
         </div>
       </div>
     </section>
@@ -371,8 +406,19 @@
       <!-- Menu Inventory Controls -->
       <div class="kitchen-orders-table-wrapper">
         <div class="table-header-title">
-          <span>Menu Inventory & Live Stock Controller</span>
+          <span>Menu Inventory & Live Stock Controller (36 Dishes)</span>
           <span style="font-size: 0.8rem; font-weight: 600; color: var(--text-light-muted);">Instant In-Stock / Sold-Out Switch</span>
+        </div>
+        <div class="admin-tools-bar" style="padding: 0.75rem 1rem 0 1rem;">
+          <input type="text" id="admin-inventory-search" class="admin-search-input" placeholder="Filter inventory (e.g. Biryani, Coffee)...">
+          <select id="admin-inventory-cat" class="admin-category-filter">
+            <option value="ALL">All Categories (36 Items)</option>
+            <option value="BREAKFAST">Morning Tiffin (7)</option>
+            <option value="MEALS">Lunch & Bowls (9)</option>
+            <option value="SNACKS">Quick Bites (8)</option>
+            <option value="DRINKS">Brews & Coolers (8)</option>
+            <option value="DESSERTS">Sweet Finishes (4)</option>
+          </select>
         </div>
         <table class="admin-table">
           <thead>
@@ -397,7 +443,10 @@
   <div id="cart-overlay" class="cart-drawer-overlay">
     <aside class="cart-drawer" aria-label="Selected Meal Tray">
       <div class="cart-drawer-header">
-        <div class="cart-drawer-title">YOUR PRE-ORDER TRAY</div>
+        <div style="display: flex; align-items: baseline; gap: 0.75rem;">
+          <div class="cart-drawer-title">YOUR PRE-ORDER TRAY</div>
+          <button id="btn-clear-tray-action" class="btn-clear-tray" title="Empty all tray items">Clear All</button>
+        </div>
         <button id="btn-close-cart" class="btn-close-drawer" aria-label="Close Tray">
           <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
         </button>
@@ -406,6 +455,12 @@
       <!-- Items List -->
       <div id="cart-items-list" class="cart-items-scroll">
         <!-- Populated dynamically -->
+      </div>
+
+      <!-- Live Kitchen Prep Estimate in Tray -->
+      <div id="cart-prep-estimate-banner" class="cart-prep-estimate" style="display: none;">
+        <span>⏱️</span>
+        <span id="cart-prep-time-text">Estimated Kitchen Prep: ~8 Mins</span>
       </div>
 
       <!-- Slot Picker inside Tray -->
@@ -704,9 +759,12 @@
         <div style="font-size: 0.85rem; font-weight: 800; letter-spacing: 0.15em; color: var(--color-ochre); text-transform: uppercase;">CAMPUS KITCHEN DISPATCH MONITOR</div>
         <h1 class="kiosk-title">LIVE ORDER CALLOUT BOARD</h1>
       </div>
-      <button id="btn-close-kiosk" class="btn-secondary-editorial" style="font-size: 1rem; padding: 0.75rem 1.5rem;">
-        <span>✕ Exit TV Mode</span>
-      </button>
+      <div style="display: flex; align-items: center; gap: 1rem;">
+        <div class="kiosk-live-clock" id="kiosk-clock">--:--:-- PM</div>
+        <button id="btn-close-kiosk" class="btn-secondary-editorial" style="font-size: 1rem; padding: 0.75rem 1.5rem;">
+          <span>✕ Exit TV Mode</span>
+        </button>
+      </div>
     </div>
 
     <div class="kiosk-grid">
@@ -776,6 +834,9 @@
       </div>
     </div>
   </footer>
+
+  <!-- Floating Toast Notification Container -->
+  <div id="toast-container" class="toast-container"></div>
 
   <!-- Application Entry Point -->
   <script src="js/bundle.js"></script>

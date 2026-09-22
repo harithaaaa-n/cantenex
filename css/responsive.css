@@ -112,6 +112,25 @@
     flex-shrink: 0;
   }
 
+  .menu-controls-row {
+    flex-direction: column;
+    align-items: stretch;
+    gap: 0.75rem;
+  }
+
+  .dietary-filter-group {
+    width: 100%;
+    overflow-x: auto;
+    flex-wrap: nowrap;
+    padding-bottom: 0.25rem;
+    -webkit-overflow-scrolling: touch;
+  }
+
+  .diet-pill {
+    white-space: nowrap;
+    flex-shrink: 0;
+  }
+
   .menu-item-row {
     grid-template-columns: 1fr;
     gap: 1rem;

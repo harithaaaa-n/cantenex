@@ -9,8 +9,14 @@ class Store {
   constructor() {
     this.listeners = new Set();
     
-    // Load persisted state or fallback
-    this.menu = this.load('cantenex_menu', INITIAL_MENU_ITEMS);
+    // Load persisted state or fallback with automatic migration
+    const savedMenu = this.load('cantenex_menu', null);
+    if (!savedMenu || savedMenu.length < INITIAL_MENU_ITEMS.length) {
+      this.menu = [...INITIAL_MENU_ITEMS];
+      this.save('cantenex_menu', this.menu);
+    } else {
+      this.menu = savedMenu;
+    }
     this.orders = this.load('cantenex_orders', INITIAL_ORDERS);
     this.reviews = this.load('cantenex_reviews', INITIAL_REVIEWS);
     this.cart = this.load('cantenex_cart', []);
