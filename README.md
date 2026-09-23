@@ -187,6 +187,6 @@ python -m pytest backend/test_api.py -v
 
 ## 👨‍🎓 Project Credits
 
-- **Developer**: Dinesh C
+- **Developer**: Dinesh C,Haritha N.
 - **Course**: Web Essentials Mini Project
 - **License**: MIT
