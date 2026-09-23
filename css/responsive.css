@@ -1,14 +1,332 @@
 /* ==========================================================================
-   CANTENEX — RESPONSIVE ART DIRECTION & TOUCH OPTIMIZATIONS
-   Deliberate mobile redesign (375px - 1024px)
+   CANTENEX — RESPONSIVE ART DIRECTION & MULTI-DEVICE ADAPTATION SYSTEM
+   Engineered for:
+   - Mobile Phones: Portrait & Landscape (320px, 360px, 375px, 390px, 414px, 480px)
+   - Tablets: Portrait & Landscape (600px, 768px, 820px, 1024px)
+   - Laptops & Desktops: (1024px, 1280px, 1366px, 1440px, 1600px, 1920px+)
+   - TV Kiosks & Cafeteria Monitors (1600px+)
    ========================================================================== */
 
-/* Tablet & Smaller Desktops (Max 1024px) */
-@media (max-width: 1024px) {
+/* ==========================================================================
+   1. GLOBAL TOUCH & FLUID SAFETY DEFAULTS
+   ========================================================================== */
+html, body {
+  overflow-x: hidden;
+  max-width: 100vw;
+  width: 100%;
+}
+
+*, *::before, *::after {
+  box-sizing: border-box;
+}
+
+/* Ensure flex/grid children shrink without blowing past screen edges */
+.container,
+.hero-grid,
+.special-grid,
+.menu-grid,
+.tracking-info-grid,
+.checkout-grid,
+.kiosk-grid,
+.footer-top-grid,
+.admin-metrics-row {
+  min-width: 0;
+}
+
+/* Fluid image & SVG scaling with preserved aspect ratios */
+img, svg.qr-svg-code, .qr-svg-code {
+  max-width: 100%;
+  height: auto;
+}
+
+/* Touch targets >= 44px on mobile and touch devices */
+button, 
+.tab-pill, 
+.diet-pill, 
+.quick-chip,
+.btn-status-action, 
+.btn-add-tray, 
+.payment-card-select,
+.student-quick-btn,
+.btn-icon-counter,
+.btn-admin-switch {
+  touch-action: manipulation;
+  -webkit-tap-highlight-color: transparent;
+}
+
+/* Input font-size to prevent mobile browser auto-zoom */
+input[type="text"],
+input[type="password"],
+input[type="search"],
+input[type="number"],
+select,
+textarea {
+  font-size: 16px;
+}
+
+/* Local scrolling containers */
+.table-responsive-container,
+.kitchen-orders-table-wrapper,
+.sql-results-container,
+.category-tabs,
+.dietary-filter-group,
+.trending-chips-list {
+  -webkit-overflow-scrolling: touch;
+  scrollbar-width: thin;
+}
+
+/* Universal Modal Safety */
+.modal-backdrop > div {
+  max-width: min(calc(100vw - 24px), 960px) !important;
+  max-height: calc(100dvh - 24px) !important;
+  box-sizing: border-box !important;
+  overflow-y: auto;
+}
+
+/* ==========================================================================
+   2. DESKTOP HOVER ENHANCEMENTS (Fine Pointer Only)
+   ========================================================================== */
+@media (hover: hover) and (pointer: fine) {
+  .hero-food-plate:hover img {
+    transform: scale(1.08) rotate(3deg);
+  }
+
+  .menu-item-row:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 16px 36px rgba(15, 15, 16, 0.08);
+  }
+
+  .btn-primary-editorial:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 12px 28px rgba(216, 76, 35, 0.35);
+  }
+
+  .cart-item-card:hover {
+    background: rgba(255, 255, 255, 0.04);
+  }
+}
+
+/* ==========================================================================
+   3. LARGE SCREENS & CAFETERIA TV KIOSKS (1600px+)
+   ========================================================================== */
+@media (min-width: 1600px) {
+  :root {
+    --container-max: 1680px;
+  }
+
+  .hero-main-title {
+    font-size: clamp(4.5rem, 6vw, 6.5rem);
+  }
+
+  .hero-food-plate {
+    width: 520px;
+    height: 520px;
+  }
+
+  .menu-grid {
+    grid-template-columns: repeat(4, 1fr);
+    gap: 2rem;
+  }
+
+  .kiosk-modal-backdrop .kiosk-token-card {
+    padding: 1.75rem 2rem;
+  }
+
+  .kiosk-modal-backdrop .kiosk-token-id {
+    font-size: 2.75rem;
+  }
+}
+
+/* ==========================================================================
+   4. DESKTOP & LAPTOPS (1024px – 1599px)
+   ========================================================================== */
+@media (min-width: 1024px) and (max-width: 1599px) {
+  .menu-grid {
+    grid-template-columns: repeat(3, 1fr);
+    gap: 1.5rem;
+  }
+
+  .hero-grid {
+    grid-template-columns: 1.15fr 0.85fr;
+    gap: 3rem;
+  }
+}
+
+@media (max-width: 1279px) {
+  .nav-links {
+    gap: 1.25rem;
+  }
+
+  .nav-link {
+    font-size: 0.82rem;
+  }
+
+  .special-grid {
+    gap: 3rem;
+  }
+}
+
+/* ==========================================================================
+   5. TABLET PORTRAIT & LANDSCAPE (768px – 1023px)
+   ========================================================================== */
+@media (min-width: 768px) and (max-width: 1023px) {
+  .container {
+    padding-left: 2rem;
+    padding-right: 2rem;
+  }
+
+  .site-header {
+    padding: 1rem 0;
+  }
+
+  .nav-links {
+    gap: 1rem;
+  }
+
+  .nav-link {
+    font-size: 0.78rem;
+  }
+
+  .btn-admin-switch span {
+    display: inline;
+  }
+
   .hero-grid {
     grid-template-columns: 1fr;
     text-align: center;
+    gap: 3.5rem;
+  }
+
+  .hero-content-col {
+    align-items: center;
+    text-align: center;
+    max-width: 680px;
+    margin: 0 auto;
+  }
+
+  .hero-action-row {
+    justify-content: center;
+  }
+
+  .hero-visual-stage {
+    height: 420px;
+  }
+
+  .hero-food-plate {
+    width: 360px;
+    height: 360px;
+  }
+
+  .badge-prep-live {
+    top: 5%;
+    right: 8%;
+  }
+
+  .badge-chef-card {
+    bottom: 5%;
+    left: 8%;
+  }
+
+  .special-grid {
+    grid-template-columns: 1fr;
     gap: 3rem;
+    text-align: center;
+  }
+
+  .special-specs-row {
+    justify-content: center;
+  }
+
+  .special-footer-action {
+    justify-content: center;
+  }
+
+  .menu-grid {
+    grid-template-columns: repeat(2, 1fr);
+    gap: 1.5rem;
+  }
+
+  .checkout-grid {
+    grid-template-columns: 1.1fr 0.9fr;
+  }
+
+  .admin-metrics-row {
+    grid-template-columns: repeat(2, 1fr);
+    gap: 1rem;
+  }
+
+  .tracking-info-grid {
+    grid-template-columns: 1.2fr 0.8fr;
+  }
+}
+
+/* ==========================================================================
+   6. MOBILE DEVICES & PHABLETS (Max-width: 767px)
+   ========================================================================== */
+@media (max-width: 767px) {
+  .container {
+    padding-left: 1.25rem;
+    padding-right: 1.25rem;
+  }
+
+  /* Header Navigation */
+  .site-header {
+    padding: 0.75rem 0;
+  }
+
+  .nav-container {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+  }
+
+  .brand-logo .brand-title {
+    font-size: 1.15rem;
+    letter-spacing: -0.02em;
+  }
+
+  .brand-logo .brand-badge {
+    display: none;
+  }
+
+  .nav-links {
+    display: none;
+  }
+
+  .nav-actions {
+    gap: 0.5rem;
+  }
+
+  .btn-admin-switch {
+    padding: 0.5rem 0.65rem;
+    font-size: 0.72rem;
+    min-height: 44px;
+    min-width: 44px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  .btn-admin-switch span {
+    display: none;
+  }
+
+  .btn-icon-counter {
+    padding: 0.5rem 0.85rem;
+    min-height: 44px;
+    font-size: 0.8rem;
+  }
+
+  /* Hero Section */
+  .hero-section {
+    padding-top: calc(70px + 2.5rem);
+    padding-bottom: 3.5rem;
+  }
+
+  .hero-grid {
+    grid-template-columns: 1fr;
+    text-align: center;
+    gap: 2.5rem;
   }
 
   .hero-content-col {
@@ -16,142 +334,289 @@
     text-align: center;
   }
 
-  .hero-action-row {
-    justify-content: center;
-  }
-
-  .special-grid {
-    grid-template-columns: 1fr;
-    gap: 3rem;
-  }
-
-  .menu-item-row {
-    grid-column: span 12;
-  }
-
-  .menu-item-feature {
-    grid-template-columns: 1fr;
-  }
-
-  .process-grid {
-    grid-template-columns: 1fr;
-    gap: 2.5rem;
-  }
-
-  .admin-metrics-row {
-    grid-template-columns: repeat(2, 1fr);
-  }
-
-  .checkout-grid {
-    grid-template-columns: 1fr;
-  }
-
-  .checkout-form-side {
-    border-right: none;
-    border-bottom: 1px solid rgba(255, 255, 255, 0.08);
-  }
-
-  .footer-top-grid {
-    grid-template-columns: 1fr;
-    gap: 2.5rem;
-  }
-}
-
-/* Mobile Devices (Max 768px) */
-@media (max-width: 768px) {
-  .nav-links {
-    display: none; /* Accessible via mobile bottom bar or compact toggles */
-  }
-
   .hero-main-title {
-    font-size: clamp(2.8rem, 12vw, 4rem);
-    line-height: 0.95;
+    font-size: clamp(2.4rem, 11vw, 3.8rem);
+    line-height: 0.98;
+    letter-spacing: -0.03em;
+  }
+
+  .hero-description {
+    font-size: 0.95rem;
+    line-height: 1.6;
+    max-width: 100%;
+  }
+
+  .hero-action-row {
+    flex-direction: column;
+    width: 100%;
+    gap: 0.75rem;
+  }
+
+  .btn-primary-editorial,
+  .btn-secondary-editorial {
+    width: 100%;
+    min-height: 48px;
+    justify-content: center;
+    font-size: 0.88rem;
   }
 
   .hero-visual-stage {
-    height: 340px;
+    height: 320px;
+    perspective: 800px;
   }
 
   .hero-food-plate {
-    width: 270px;
-    height: 270px;
+    width: 260px;
+    height: 260px;
+    padding: 8px;
   }
 
   .badge-prep-live {
     top: 0;
     right: 0;
-    padding: 0.6rem 0.9rem;
+    padding: 0.5rem 0.8rem;
+    font-size: 0.75rem;
+    gap: 0.5rem;
+  }
+
+  .badge-prep-live .time {
+    font-size: 1.05rem;
   }
 
   .badge-chef-card {
     bottom: 0;
     left: 0;
-    padding: 0.75rem 1rem;
+    padding: 0.65rem 0.9rem;
+  }
+
+  .badge-chef-card .title {
+    font-size: 0.82rem;
+  }
+
+  .badge-chef-card .meta {
+    font-size: 0.7rem;
   }
 
   .hero-bottom-bar {
     flex-direction: column;
     align-items: flex-start;
     gap: 0.75rem;
+    margin-top: 2rem;
+  }
+
+  /* Today's Special */
+  .section-special {
+    padding: 4rem 0;
+  }
+
+  .special-grid {
+    grid-template-columns: 1fr;
+    gap: 2.25rem;
+  }
+
+  .special-title {
+    font-size: clamp(2rem, 8vw, 2.8rem);
+  }
+
+  .special-description {
+    font-size: 0.92rem;
+  }
+
+  .special-specs-row {
+    flex-wrap: wrap;
+    gap: 1.25rem;
+    padding: 1rem 0;
+  }
+
+  .spec-item .value {
+    font-size: 1.05rem;
+  }
+
+  .special-footer-action {
+    flex-direction: column;
+    align-items: stretch;
+    gap: 1rem;
+  }
+
+  .special-footer-action .btn-primary-editorial {
+    width: 100%;
+    justify-content: center;
+  }
+
+  /* Menu Catalogue Section */
+  .section-menu {
+    padding: 4rem 0;
+  }
+
+  .menu-section-title {
+    font-size: clamp(2.2rem, 9vw, 3.2rem);
   }
 
   .filter-bar-container {
     flex-direction: column;
     align-items: stretch;
+    gap: 1rem;
   }
 
   .category-tabs {
+    width: 100%;
     overflow-x: auto;
-    padding-bottom: 0.5rem;
     flex-wrap: nowrap;
-    -webkit-overflow-scrolling: touch;
+    padding-bottom: 0.4rem;
+    gap: 0.4rem;
   }
 
   .tab-pill {
+    padding: 0.55rem 1rem;
+    font-size: 0.75rem;
     white-space: nowrap;
     flex-shrink: 0;
+    min-height: 44px;
+    display: inline-flex;
+    align-items: center;
+  }
+
+  .menu-search-wrapper {
+    width: 100%;
+    min-width: 0;
+  }
+
+  .menu-search-input {
+    width: 100%;
+    min-height: 44px;
   }
 
   .menu-controls-row {
     flex-direction: column;
     align-items: stretch;
-    gap: 0.75rem;
+    gap: 0.85rem;
   }
 
   .dietary-filter-group {
     width: 100%;
     overflow-x: auto;
     flex-wrap: nowrap;
-    padding-bottom: 0.25rem;
-    -webkit-overflow-scrolling: touch;
+    padding-bottom: 0.35rem;
+    gap: 0.4rem;
   }
 
   .diet-pill {
     white-space: nowrap;
     flex-shrink: 0;
+    min-height: 44px;
+    padding: 0.5rem 0.85rem;
+    font-size: 0.75rem;
+    display: inline-flex;
+    align-items: center;
+  }
+
+  .menu-sort-select {
+    width: 100%;
+    min-height: 44px;
+  }
+
+  .trending-chips-bar {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 0.5rem;
+  }
+
+  .trending-chips-list {
+    width: 100%;
+    overflow-x: auto;
+    flex-wrap: nowrap;
+    padding-bottom: 0.3rem;
+  }
+
+  .quick-chip {
+    white-space: nowrap;
+    flex-shrink: 0;
+    min-height: 38px;
+    display: inline-flex;
+    align-items: center;
+  }
+
+  /* Food Menu Cards */
+  .menu-grid {
+    grid-template-columns: 1fr;
+    gap: 1.25rem;
   }
 
   .menu-item-row {
     grid-template-columns: 1fr;
-    gap: 1rem;
+    gap: 0.85rem;
+    padding: 1.15rem;
   }
 
   .menu-item-row .dish-thumb {
     width: 100%;
-    height: 180px;
+    height: 190px;
+    border-radius: var(--radius-sm);
+  }
+
+  .dish-title {
+    font-size: 1.2rem;
+  }
+
+  .dish-desc-short {
+    font-size: 0.85rem;
+    -webkit-line-clamp: 2;
+  }
+
+  .dish-bottom-bar {
+    margin-top: 0.85rem;
+    padding-top: 0.65rem;
+  }
+
+  .btn-add-tray {
+    min-height: 44px;
+    padding: 0.55rem 1.1rem;
+    font-size: 0.78rem;
+  }
+
+  /* Cart Drawer Overlay */
+  .cart-drawer {
+    width: 100%;
+    max-width: 100vw;
+  }
+
+  .quantity-stepper button {
+    min-width: 44px;
+    min-height: 44px;
+    font-size: 1.1rem;
+  }
+
+  /* Live Order Tracking */
+  .section-tracking {
+    padding: 4rem 0;
+  }
+
+  .tracking-header-meta {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 0.75rem;
+  }
+
+  .tracking-header-meta > div:last-child {
+    text-align: left;
+    width: 100%;
+  }
+
+  .tracking-token-id {
+    font-size: 2.2rem;
   }
 
   .tracking-stepper {
     flex-direction: column;
     align-items: flex-start;
-    gap: 1.5rem;
-    padding-left: 1.5rem;
+    gap: 1.25rem;
+    padding-left: 1.25rem;
   }
 
   .tracking-stepper::before {
     top: 5%;
     bottom: 5%;
-    left: 32px;
+    left: 30px;
     right: auto;
     width: 2px;
     height: 90%;
@@ -166,57 +631,316 @@
 
   .tracking-info-grid {
     grid-template-columns: 1fr;
+    gap: 1.75rem;
   }
 
-  .cart-drawer {
-    max-width: 100%;
-  }
-
-  .admin-metrics-row {
-    grid-template-columns: 1fr;
-  }
-
-  .kitchen-orders-table-wrapper {
-    overflow-x: auto;
-  }
-
-  .admin-table {
-    min-width: 650px;
-  }
-
-  .footer-bottom-bar {
-    flex-direction: column;
-    gap: 1rem;
+  .tracking-qr-box {
     text-align: center;
+    padding: 1.5rem 1rem;
   }
-}
 
-/* Very Small Screens (375px - 430px) */
-@media (max-width: 430px) {
-  .hero-action-row {
+  .tracking-search-bar {
     flex-direction: column;
-    width: 100%;
+    gap: 0.75rem;
   }
 
-  .btn-primary-editorial,
-  .btn-secondary-editorial {
+  .tracking-search-bar input,
+  .tracking-search-bar button {
     width: 100%;
-    justify-content: center;
+    min-height: 48px;
   }
 
-  .special-specs-row {
+  /* Modals */
+  .modal-backdrop {
+    padding: 0.75rem;
+    align-items: center;
+  }
+
+  .modal-card, 
+  .checkout-modal-content,
+  .dish-spotlight-modal,
+  .confirmation-card {
+    max-width: min(calc(100vw - 1.5rem), 540px) !important;
+    max-height: calc(100dvh - 1.5rem) !important;
+    border-radius: var(--radius-md);
+  }
+
+  .checkout-grid {
+    grid-template-columns: 1fr !important;
+    gap: 0;
+  }
+
+  .checkout-form-side {
+    border-right: none !important;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+    padding: 1.25rem !important;
+  }
+
+  .checkout-summary-side {
+    padding: 1.25rem !important;
+  }
+
+  .student-quick-profiles {
+    gap: 0.35rem;
+  }
+
+  .student-quick-btn {
+    min-height: 38px;
+    padding: 0.35rem 0.65rem;
+    font-size: 0.72rem;
+  }
+
+  .payment-selection-grid,
+  .payment-options-row {
+    grid-template-columns: 1fr !important;
+  }
+
+  /* Dish Spotlight Modal */
+  .dish-spotlight-modal {
+    display: flex !important;
+    flex-direction: column !important;
+  }
+
+  .dish-spotlight-img {
+    height: 200px !important;
+    min-height: 200px !important;
+    width: 100% !important;
+    flex-shrink: 0 !important;
+  }
+
+  .dish-spotlight-content {
+    padding: 1.25rem !important;
+    max-height: none !important;
+  }
+
+  /* Admin & Kitchen Dashboard */
+  .admin-header-bar,
+  .admin-top-header {
     flex-direction: column;
     align-items: flex-start;
     gap: 1rem;
   }
 
-  .special-footer-action {
+  .admin-header-actions {
+    width: 100%;
+    flex-direction: column;
+    gap: 0.5rem;
+  }
+
+  .admin-header-actions button {
+    width: 100%;
+    justify-content: center;
+    min-height: 44px;
+  }
+
+  .admin-metrics-row {
+    grid-template-columns: 1fr !important;
+    gap: 0.75rem;
+  }
+
+  .admin-controls-bar {
     flex-direction: column;
     align-items: stretch;
+    gap: 0.75rem;
+  }
+
+  .kitchen-orders-table-wrapper {
+    overflow-x: auto;
+    border-radius: var(--radius-sm);
+  }
+
+  .admin-table {
+    min-width: 680px;
+  }
+
+  /* TV Kiosk Modal */
+  .kiosk-modal-backdrop .kiosk-header {
+    flex-direction: column;
+    align-items: flex-start;
     gap: 1rem;
+    padding: 1.25rem;
+  }
+
+  .kiosk-grid {
+    grid-template-columns: 1fr !important;
+    gap: 1.25rem;
+    padding: 1.25rem;
+  }
+
+  /* Database Studio Modal */
+  #sqlite-modal > div {
+    max-width: min(calc(100vw - 1.5rem), 960px) !important;
+    max-height: calc(100dvh - 1.5rem) !important;
+  }
+
+  #sql-results-container {
+    overflow-x: auto;
+    max-width: 100%;
+  }
+
+  /* Footer */
+  .footer-top-grid {
+    grid-template-columns: 1fr;
+    gap: 2rem;
+  }
+
+  .footer-bottom-bar {
+    flex-direction: column;
+    gap: 0.75rem;
+    text-align: center;
+  }
+}
+
+/* ==========================================================================
+   7. EXTRA SMALL PHONES (320px – 380px)
+   ========================================================================== */
+@media (max-width: 380px) {
+  .container {
+    padding-left: 0.85rem;
+    padding-right: 0.85rem;
+  }
+
+  .brand-logo .brand-title {
+    font-size: 1rem;
+  }
+
+  .hero-main-title {
+    font-size: 2.15rem;
+  }
+
+  .hero-food-plate {
+    width: 220px;
+    height: 220px;
+  }
+
+  .hero-visual-stage {
+    height: 270px;
+  }
+
+  .badge-prep-live {
+    padding: 0.4rem 0.6rem;
+    font-size: 0.68rem;
+  }
+
+  .badge-chef-card {
+    padding: 0.5rem 0.7rem;
+  }
+
+  .dish-title {
+    font-size: 1.1rem;
+  }
+
+  .dish-price-tag {
+    font-size: 1.25rem;
+  }
+
+  .btn-add-tray {
+    padding: 0.5rem 0.75rem;
+    font-size: 0.72rem;
+  }
+
+  .nutrient-pill {
+    padding: 0.4rem 0.25rem;
+  }
+
+  .nutrient-pill .val {
+    font-size: 0.8rem;
+  }
+
+  .nutrient-pill .lbl {
+    font-size: 0.65rem;
   }
 
   .btn-icon-counter span:not(.badge-cart-count) {
     display: none;
+  }
+}
+
+/* ==========================================================================
+   8. COMPACT LANDSCAPE ORIENTATION (Phones in Landscape)
+   ========================================================================== */
+@media (orientation: landscape) and (max-height: 560px) {
+  .site-header {
+    padding: 0.4rem 0;
+  }
+
+  .hero-section {
+    padding-top: calc(50px + 1.5rem);
+    padding-bottom: 2rem;
+  }
+
+  .hero-grid {
+    grid-template-columns: 1.1fr 0.9fr;
+    text-align: left;
+    gap: 2rem;
+    align-items: center;
+  }
+
+  .hero-content-col {
+    align-items: flex-start;
+    text-align: left;
+  }
+
+  .hero-main-title {
+    font-size: 2.2rem;
+    line-height: 1;
+  }
+
+  .hero-description {
+    font-size: 0.85rem;
+    margin-bottom: 1rem;
+  }
+
+  .hero-action-row {
+    flex-direction: row;
+  }
+
+  .hero-visual-stage {
+    height: 240px;
+  }
+
+  .hero-food-plate {
+    width: 200px;
+    height: 200px;
+    padding: 6px;
+  }
+
+  .badge-prep-live {
+    top: 5%;
+    right: 5%;
+    padding: 0.4rem 0.65rem;
+  }
+
+  .badge-chef-card {
+    bottom: 5%;
+    left: 5%;
+    padding: 0.4rem 0.65rem;
+  }
+
+  .menu-grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+
+  .modal-card,
+  .checkout-modal-content,
+  .dish-spotlight-modal,
+  .confirmation-card {
+    max-height: calc(100vh - 1rem) !important;
+    overflow-y: auto;
+  }
+
+  .dish-spotlight-modal {
+    display: grid !important;
+    grid-template-columns: 1fr 1fr !important;
+  }
+
+  .dish-spotlight-img {
+    height: 100% !important;
+    min-height: 220px;
+  }
+
+  .kiosk-grid {
+    grid-template-columns: 1fr 1fr !important;
+    padding: 1rem;
   }
 }
