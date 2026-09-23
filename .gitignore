@@ -7,11 +7,20 @@ __pycache__/
 env/
 venv/
 .venv/
+.pytest_cache/
 
-# SQLite local database binary (schema.sql is tracked)
+# Environment variables & secrets
+.env
+.env.local
+
+# SQLite local database binaries
+*.db
+*.sqlite
+*.sqlite3
 *.db-journal
 *.sqlite3-journal
 
 # OS files
 Thumbs.db
 .DS_Store
+

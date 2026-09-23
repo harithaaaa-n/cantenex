@@ -5,9 +5,25 @@
 
 import { INITIAL_MENU_ITEMS, INITIAL_ORDERS, INITIAL_REVIEWS, PICKUP_SLOTS } from './data.js';
 
+export function getApiBase() {
+  if (typeof window !== 'undefined' && window.CANTENEX_API_URL && window.CANTENEX_API_URL.trim() !== '') {
+    return window.CANTENEX_API_URL.replace(/\/$/, '');
+  }
+  if (typeof window !== 'undefined' && window.location) {
+    if (window.location.protocol === 'file:') return 'http://localhost:8000';
+    if (window.location.port === '8000' || window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1') {
+      return `${window.location.protocol}//${window.location.hostname}:8000`;
+    }
+    return window.location.origin;
+  }
+  return 'http://localhost:8000';
+}
+
 class Store {
   constructor() {
     this.listeners = new Set();
+    this.isOnline = true;
+    this.adminKey = this.loadSession('cantenex_admin_key', '');
     
     // Load persisted state or fallback with automatic migration
     const savedMenu = this.load('cantenex_menu', null);
@@ -48,7 +64,17 @@ class Store {
         this.menu = this.load('cantenex_menu', INITIAL_MENU_ITEMS);
         this.notify('menu');
       }
+      if (e.key === 'cantenex_reviews') {
+        this.reviews = this.load('cantenex_reviews', INITIAL_REVIEWS);
+        this.notify('reviews');
+      }
     });
+
+    // Auto-sync with production / local backend
+    setTimeout(() => {
+      this.syncWithServer();
+      this.startLiveSync();
+    }, 100);
   }
 
   load(key, fallback) {
@@ -66,6 +92,41 @@ class Store {
     } catch (e) {}
   }
 
+  loadSession(key, fallback) {
+    try {
+      const data = sessionStorage.getItem(key);
+      return data ? JSON.parse(data) : fallback;
+    } catch (e) {
+      return fallback;
+    }
+  }
+
+  saveSession(key, value) {
+    try {
+      sessionStorage.setItem(key, JSON.stringify(value));
+    } catch (e) {}
+  }
+
+  getAdminKey() {
+    return this.adminKey;
+  }
+
+  setAdminKey(key) {
+    this.adminKey = key;
+    this.saveSession('cantenex_admin_key', key);
+    this.notify('auth', { isAdmin: !!key });
+  }
+
+  clearAdminKey() {
+    this.adminKey = '';
+    this.saveSession('cantenex_admin_key', '');
+    this.notify('auth', { isAdmin: false });
+  }
+
+  isAdminAuthenticated() {
+    return !!this.adminKey;
+  }
+
   subscribe(callback) {
     this.listeners.add(callback);
     return () => this.listeners.delete(callback);
@@ -73,6 +134,53 @@ class Store {
 
   notify(event, payload) {
     this.listeners.forEach((cb) => cb(event, payload));
+  }
+
+  // --- Live Server Sync & Polling Engine ---
+  async syncWithServer() {
+    try {
+      const apiBase = getApiBase();
+      const res = await fetch(`${apiBase}/api/menu`, { cache: 'no-store' });
+      if (res.ok) {
+        const serverMenu = await res.json();
+        if (Array.isArray(serverMenu) && serverMenu.length > 0) {
+          this.menu = serverMenu;
+          this.save('cantenex_menu', this.menu);
+          this.notify('menu');
+        }
+      }
+
+      const ordersRes = await fetch(`${apiBase}/api/orders`, { cache: 'no-store' });
+      if (ordersRes.ok) {
+        const serverOrders = await ordersRes.json();
+        if (Array.isArray(serverOrders)) {
+          this.orders = serverOrders;
+          this.save('cantenex_orders', this.orders);
+          this.notify('orders');
+        }
+      }
+    } catch (err) {
+      // Backend not reached, keep fallback
+      this.isOnline = false;
+    }
+  }
+
+  startLiveSync(intervalMs = 4000) {
+    if (this._syncTimer) clearInterval(this._syncTimer);
+    this._syncTimer = setInterval(async () => {
+      try {
+        const apiBase = getApiBase();
+        const ordersRes = await fetch(`${apiBase}/api/orders`, { cache: 'no-store' });
+        if (ordersRes.ok) {
+          const serverOrders = await ordersRes.json();
+          if (Array.isArray(serverOrders) && JSON.stringify(serverOrders) !== JSON.stringify(this.orders)) {
+            this.orders = serverOrders;
+            this.save('cantenex_orders', this.orders);
+            this.notify('orders');
+          }
+        }
+      } catch (e) {}
+    }, intervalMs);
   }
 
   // --- Cart Actions ---
@@ -132,16 +240,22 @@ class Store {
     this.notify('slot');
   }
 
+  setActiveTrackingId(id) {
+    this.activeTrackingId = id;
+    this.save('cantenex_active_tracking', this.activeTrackingId);
+    this.notify('orders');
+  }
+
   // --- Order Actions ---
-  placeOrder({ studentName, regNo, department, paymentMethod }) {
+  async placeOrder({ studentName, regNo, department, paymentMethod }) {
     if (this.cart.length === 0) return null;
 
     const randomNum = Math.floor(1000 + Math.random() * 9000);
     const orderId = `CX-${randomNum}`;
     
     // Assign designated counter based on item categories
-    const hasDosa = this.cart.some((i) => i.id === 'cx-01' || i.id === 'cx-02');
-    const hasDrinkOnly = this.cart.every((i) => i.diet === 'veg' && (i.id.includes('11') || i.id.includes('12') || i.id.includes('13') || i.id.includes('14')));
+    const hasDosa = this.cart.some((i) => i.id === 'cx-01' || i.id === 'cx-02' || i.id === 'cx-17' || i.id === 'cx-19');
+    const hasDrinkOnly = this.cart.every((i) => i.diet === 'veg' && (i.id.includes('11') || i.id.includes('12') || i.id.includes('13') || i.id.includes('14') || i.id.includes('31') || i.id.includes('32') || i.id.includes('33') || i.id.includes('34')));
     
     let counter = 'Counter 2 (Hot Express)';
     if (hasDosa) counter = 'Counter 1 (Tiffin & Dosa)';
@@ -167,6 +281,7 @@ class Store {
       timestamp: Date.now(),
     };
 
+    // Optimistically update local state
     this.orders.unshift(newOrder);
     this.save('cantenex_orders', this.orders);
     
@@ -176,19 +291,52 @@ class Store {
     // Update current user info
     this.currentUser = {
       ...this.currentUser,
-      name: studentName,
-      regNo,
-      department,
+      name: studentName || this.currentUser.name,
+      regNo: regNo || this.currentUser.regNo,
+      department: department || this.currentUser.department,
     };
     this.save('cantenex_user', this.currentUser);
 
     this.clearCart();
     this.notify('orders');
     this.notify('order_placed', newOrder);
+
+    // Asynchronously dispatch to FastAPI Production Backend
+    try {
+      const apiBase = getApiBase();
+      const res = await fetch(`${apiBase}/api/orders`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          id: orderId,
+          studentName: newOrder.studentName,
+          regNo: newOrder.regNo,
+          department: newOrder.department,
+          items: newOrder.items.map(i => ({ id: i.id, name: i.name, price: i.price, quantity: i.quantity })),
+          pickupSlot: newOrder.pickupSlot,
+          pickupType: newOrder.pickupType,
+          paymentMethod: newOrder.paymentMethod,
+          counter: newOrder.counter,
+          placedAt: newOrder.placedAt,
+          prepProgress: 15
+        })
+      });
+      if (res.ok) {
+        const data = await res.json();
+        if (data.order && data.order.totalAmount) {
+          newOrder.totalAmount = data.order.totalAmount;
+          this.save('cantenex_orders', this.orders);
+          this.notify('orders');
+        }
+      }
+    } catch (e) {
+      // Local fallback active
+    }
+
     return newOrder;
   }
 
-  updateOrderStatus(orderId, nextStatus) {
+  async updateOrderStatus(orderId, nextStatus) {
     const order = this.orders.find((o) => o.id === orderId);
     if (order) {
       order.status = nextStatus;
@@ -201,30 +349,67 @@ class Store {
       this.save('cantenex_orders', this.orders);
       this.notify('orders');
       this.notify('order_updated', order);
+
+      // Async backend update
+      try {
+        const apiBase = getApiBase();
+        const headers = { 'Content-Type': 'application/json' };
+        if (this.adminKey) headers['X-Admin-Key'] = this.adminKey;
+
+        await fetch(`${apiBase}/api/orders/update-status`, {
+          method: 'POST',
+          headers,
+          body: JSON.stringify({ orderId, status: nextStatus })
+        });
+      } catch (e) {}
     }
   }
 
   // --- Admin Menu Controls ---
-  toggleItemStock(itemId) {
+  async toggleItemStock(itemId) {
     const item = this.menu.find((i) => i.id === itemId);
     if (item) {
       item.inStock = !item.inStock;
       this.save('cantenex_menu', this.menu);
       this.notify('menu');
+
+      try {
+        const apiBase = getApiBase();
+        const headers = { 'Content-Type': 'application/json' };
+        if (this.adminKey) headers['X-Admin-Key'] = this.adminKey;
+
+        await fetch(`${apiBase}/api/menu/toggle-stock`, {
+          method: 'POST',
+          headers,
+          body: JSON.stringify({ itemId })
+        });
+      } catch (e) {}
     }
   }
 
-  updateItemPrice(itemId, newPrice) {
+  async updateItemPrice(itemId, newPrice) {
     const item = this.menu.find((i) => i.id === itemId);
     if (item && newPrice > 0) {
       item.price = Number(newPrice);
       this.save('cantenex_menu', this.menu);
       this.notify('menu');
+
+      try {
+        const apiBase = getApiBase();
+        const headers = { 'Content-Type': 'application/json' };
+        if (this.adminKey) headers['X-Admin-Key'] = this.adminKey;
+
+        await fetch(`${apiBase}/api/menu/update-price`, {
+          method: 'POST',
+          headers,
+          body: JSON.stringify({ itemId, price: Number(newPrice) })
+        });
+      } catch (e) {}
     }
   }
 
   // --- Student Community Reviews & Ratings ---
-  addReview({ menuId, studentName, rating, comment }) {
+  async addReview({ menuId, studentName, rating, comment }) {
     const newRev = {
       id: `rev-${Date.now()}`,
       menuId,
@@ -251,6 +436,21 @@ class Store {
 
     this.notify('menu');
     this.notify('reviews', newRev);
+
+    try {
+      const apiBase = getApiBase();
+      await fetch(`${apiBase}/api/reviews`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          menuId,
+          studentName: newRev.studentName,
+          rating: newRev.rating,
+          comment: newRev.comment
+        })
+      });
+    } catch (e) {}
+
     return newRev;
   }
 
@@ -275,11 +475,31 @@ class Store {
     this.notify('cart');
   }
 
-  // --- Client-Side SQLite Query Engine for Evaluator Inspector ---
-  executeSQL(rawSql) {
-    const sql = rawSql.trim().replace(/;$/, '');
+  // --- Database Studio Query Engine (API with safe fallback) ---
+  async executeSQL(rawSql, presetKey = null) {
+    const sql = (rawSql || '').trim().replace(/;$/, '');
+    const apiBase = getApiBase();
+
+    // Try backend API first if admin authenticated
+    try {
+      const headers = { 'Content-Type': 'application/json' };
+      if (this.adminKey) headers['X-Admin-Key'] = this.adminKey;
+
+      const res = await fetch(`${apiBase}/api/sql`, {
+        method: 'POST',
+        headers,
+        body: JSON.stringify({ query: sql, preset: presetKey })
+      });
+
+      if (res.ok) {
+        return await res.json();
+      }
+    } catch (e) {
+      // Fall back to client parser
+    }
+
+    // Client-Side fallback
     const lower = sql.toLowerCase();
-    
     if (lower.startsWith('select')) {
       if (lower.includes('from orders')) {
         if (lower.includes('group by')) {
@@ -366,7 +586,7 @@ class Store {
     throw new Error(`Unsupported SQL syntax in parser. Try: SELECT * FROM orders; OR SELECT * FROM menu_items; OR SELECT * FROM dish_reviews;`);
   }
 
-  // --- Metrics strictly derived from local orders ---
+  // --- Metrics derived from local and server orders ---
   getRealMetrics() {
     const todayTotal = this.orders.length;
     const activeTokens = this.orders.filter((o) => o.status !== 'COMPLETED').length;
@@ -422,4 +642,3 @@ export function generateQRCodeSVG(text, size = 160) {
 
   return `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 ${size} ${size}" width="${size}" height="${size}" class="qr-svg-code">${rects}</svg>`;
 }
-

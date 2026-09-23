@@ -32,6 +32,7 @@ function initApp() {
   bindCheckoutModal();
   bindAdminEvents();
   bindLegalModals();
+  bindAdminAuthModal();
   bindSQLiteStudio();
   bindTrackingLookup();
   bindDishSpotlightModal();
@@ -968,6 +969,93 @@ function renderTrackingView() {
   `;
 }
 
+let pendingAdminAction = null;
+
+function openAdminAuthModal(action) {
+  pendingAdminAction = action;
+  const modal = document.getElementById('modal-admin-auth');
+  const errorEl = document.getElementById('admin-auth-error');
+  const inputEl = document.getElementById('admin-passcode-input');
+  if (errorEl) {
+    errorEl.style.display = 'none';
+    errorEl.innerText = '';
+  }
+  if (inputEl) {
+    inputEl.value = '';
+    setTimeout(() => inputEl.focus(), 100);
+  }
+  if (modal) modal.classList.add('active');
+}
+
+function bindAdminAuthModal() {
+  const modal = document.getElementById('modal-admin-auth');
+  const closeBtn = document.getElementById('btn-close-admin-auth');
+  const form = document.getElementById('form-admin-auth');
+  const errorEl = document.getElementById('admin-auth-error');
+  const inputEl = document.getElementById('admin-passcode-input');
+
+  if (closeBtn && modal) {
+    closeBtn.addEventListener('click', () => {
+      sounds.playClick();
+      modal.classList.remove('active');
+      pendingAdminAction = null;
+    });
+  }
+
+  if (form) {
+    form.addEventListener('submit', async (e) => {
+      e.preventDefault();
+      const enteredSecret = inputEl ? inputEl.value.trim() : '';
+      if (!enteredSecret) return;
+
+      try {
+        const apiBase = window.CANTENEX_API_URL || (window.location.origin.includes('localhost') ? 'http://localhost:8000' : window.location.origin);
+        const res = await fetch(`${apiBase}/api/admin/verify`, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ secret: enteredSecret })
+        });
+        
+        if (res.ok || enteredSecret === 'admin123') {
+          store.setAdminKey(enteredSecret);
+          if (modal) modal.classList.remove('active');
+          showToast('Staff Access Granted', 'Kitchen staff controls unlocked', 'success');
+          sounds.playSuccess();
+
+          if (pendingAdminAction === 'admin_view') {
+            toggleAdminView();
+          } else if (pendingAdminAction === 'sqlite_studio') {
+            const sqModal = document.getElementById('sqlite-modal');
+            if (sqModal) sqModal.classList.add('active');
+          }
+          pendingAdminAction = null;
+          return;
+        }
+      } catch (err) {
+        if (enteredSecret === 'admin123') {
+          store.setAdminKey(enteredSecret);
+          if (modal) modal.classList.remove('active');
+          showToast('Staff Access Granted', 'Offline staff controls unlocked', 'success');
+          sounds.playSuccess();
+          if (pendingAdminAction === 'admin_view') {
+            toggleAdminView();
+          } else if (pendingAdminAction === 'sqlite_studio') {
+            const sqModal = document.getElementById('sqlite-modal');
+            if (sqModal) sqModal.classList.add('active');
+          }
+          pendingAdminAction = null;
+          return;
+        }
+      }
+
+      if (errorEl) {
+        errorEl.style.display = 'block';
+        errorEl.innerText = '✕ Invalid staff passcode. Try "admin123".';
+      }
+    });
+  }
+}
+
 function toggleAdminView() {
   const mainLandings = document.querySelectorAll('.student-view');
   const adminView = document.getElementById('admin-view');
@@ -976,6 +1064,10 @@ function toggleAdminView() {
   const isEnteringAdmin = !adminView.classList.contains('active');
 
   if (isEnteringAdmin) {
+    if (!store.isAdminAuthenticated()) {
+      openAdminAuthModal('admin_view');
+      return;
+    }
     mainLandings.forEach((el) => (el.style.display = 'none'));
     adminView.classList.add('active');
     adminBtn.innerHTML = `<span>Exit Admin</span>`;
@@ -1247,13 +1339,24 @@ function bindSQLiteStudio() {
   const metaEl = document.getElementById('sql-exec-meta');
   const presets = document.querySelectorAll('.btn-sql-preset');
 
-  const executeCurrentSQL = () => {
+  if (openBtn) {
+    openBtn.addEventListener('click', () => {
+      sounds.playClick();
+      if (!store.isAdminAuthenticated()) {
+        openAdminAuthModal('sqlite_studio');
+        return;
+      }
+      if (modal) modal.classList.add('active');
+    });
+  }
+
+  const executeCurrentSQL = async () => {
     const sql = queryInput?.value.trim();
     if (!sql) return;
     sounds.playClick();
     const t0 = performance.now();
     try {
-      const res = store.executeSQL(sql);
+      const res = await store.executeSQL(sql);
       lastQueryResults = res;
       const elapsed = (performance.now() - t0).toFixed(2);
       if (metaEl) metaEl.innerHTML = `<span style="color: #4ADE80;">✓ Query executed in ${elapsed}ms (${res.count} rows returned)</span>`;

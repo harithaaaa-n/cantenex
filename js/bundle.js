@@ -1008,12 +1008,29 @@
   }
   const sounds = new SoundEngine();
 
+  function getApiBase() {
+    if (typeof window !== 'undefined' && window.CANTENEX_API_URL && window.CANTENEX_API_URL.trim() !== '') {
+      return window.CANTENEX_API_URL.replace(/\/$/, '');
+    }
+    if (typeof window !== 'undefined' && window.location) {
+      if (window.location.protocol === 'file:') return 'http://localhost:8000';
+      if (window.location.port === '8000' || window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1') {
+        return `${window.location.protocol}//${window.location.hostname}:8000`;
+      }
+      return window.location.origin;
+    }
+    return 'http://localhost:8000';
+  }
+
   /* ==========================================================================
      3. REACTIVE STORE & RELATIONAL ENGINE
      ========================================================================== */
   class Store {
     constructor() {
       this.listeners = new Set();
+      this.isOnline = true;
+      this.adminKey = this.loadSession('cantenex_admin_key', '');
+
       const savedMenu = this.load('cantenex_menu', null);
       if (!savedMenu || savedMenu.length < INITIAL_MENU_ITEMS.length) {
         this.menu = [...INITIAL_MENU_ITEMS];
@@ -1055,6 +1072,11 @@
           this.notify('reviews');
         }
       });
+
+      setTimeout(() => {
+        this.syncWithServer();
+        this.startLiveSync();
+      }, 100);
     }
 
     load(key, fallback) {
@@ -1072,6 +1094,41 @@
       } catch (e) {}
     }
 
+    loadSession(key, fallback) {
+      try {
+        const data = sessionStorage.getItem(key);
+        return data ? JSON.parse(data) : fallback;
+      } catch (e) {
+        return fallback;
+      }
+    }
+
+    saveSession(key, value) {
+      try {
+        sessionStorage.setItem(key, JSON.stringify(value));
+      } catch (e) {}
+    }
+
+    getAdminKey() {
+      return this.adminKey;
+    }
+
+    setAdminKey(key) {
+      this.adminKey = key;
+      this.saveSession('cantenex_admin_key', key);
+      this.notify('auth', { isAdmin: !!key });
+    }
+
+    clearAdminKey() {
+      this.adminKey = '';
+      this.saveSession('cantenex_admin_key', '');
+      this.notify('auth', { isAdmin: false });
+    }
+
+    isAdminAuthenticated() {
+      return !!this.adminKey;
+    }
+
     subscribe(callback) {
       this.listeners.add(callback);
       return () => this.listeners.delete(callback);
@@ -1079,6 +1136,51 @@
 
     notify(event, payload) {
       this.listeners.forEach((cb) => cb(event, payload));
+    }
+
+    async syncWithServer() {
+      try {
+        const apiBase = getApiBase();
+        const res = await fetch(`${apiBase}/api/menu`, { cache: 'no-store' });
+        if (res.ok) {
+          const serverMenu = await res.json();
+          if (Array.isArray(serverMenu) && serverMenu.length > 0) {
+            this.menu = serverMenu;
+            this.save('cantenex_menu', this.menu);
+            this.notify('menu');
+          }
+        }
+
+        const ordersRes = await fetch(`${apiBase}/api/orders`, { cache: 'no-store' });
+        if (ordersRes.ok) {
+          const serverOrders = await ordersRes.json();
+          if (Array.isArray(serverOrders)) {
+            this.orders = serverOrders;
+            this.save('cantenex_orders', this.orders);
+            this.notify('orders');
+          }
+        }
+      } catch (err) {
+        this.isOnline = false;
+      }
+    }
+
+    startLiveSync(intervalMs = 4000) {
+      if (this._syncTimer) clearInterval(this._syncTimer);
+      this._syncTimer = setInterval(async () => {
+        try {
+          const apiBase = getApiBase();
+          const ordersRes = await fetch(`${apiBase}/api/orders`, { cache: 'no-store' });
+          if (ordersRes.ok) {
+            const serverOrders = await ordersRes.json();
+            if (Array.isArray(serverOrders) && JSON.stringify(serverOrders) !== JSON.stringify(this.orders)) {
+              this.orders = serverOrders;
+              this.save('cantenex_orders', this.orders);
+              this.notify('orders');
+            }
+          }
+        } catch (e) {}
+      }, intervalMs);
     }
 
     addToCart(item, quantity = 1) {
@@ -1137,7 +1239,7 @@
       this.notify('orders');
     }
 
-    addReview({ menuId, studentName, rating, comment }) {
+    async addReview({ menuId, studentName, rating, comment }) {
       const newRev = {
         id: `rev-${Date.now()}`,
         menuId,
@@ -1151,7 +1253,6 @@
       this.reviews.unshift(newRev);
       this.save('cantenex_reviews', this.reviews);
 
-      // Recalculate average rating for menu item
       const dishReviews = this.reviews.filter((r) => r.menuId === menuId);
       if (dishReviews.length > 0) {
         const avg = dishReviews.reduce((sum, r) => sum + r.rating, 0) / dishReviews.length;
@@ -1164,6 +1265,21 @@
 
       this.notify('menu');
       this.notify('reviews', newRev);
+
+      try {
+        const apiBase = getApiBase();
+        await fetch(`${apiBase}/api/reviews`, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            menuId,
+            studentName: newRev.studentName,
+            rating: newRev.rating,
+            comment: newRev.comment
+          })
+        });
+      } catch (e) {}
+
       return newRev;
     }
 
@@ -1171,14 +1287,14 @@
       return this.reviews.filter((r) => r.menuId === menuId);
     }
 
-    placeOrder({ studentName, regNo, department, paymentMethod }) {
+    async placeOrder({ studentName, regNo, department, paymentMethod }) {
       if (this.cart.length === 0) return null;
 
       const randomNum = Math.floor(1000 + Math.random() * 9000);
       const orderId = `CX-${randomNum}`;
       
-      const hasDosa = this.cart.some((i) => i.id === 'cx-01' || i.id === 'cx-02');
-      const hasDrinkOnly = this.cart.every((i) => i.diet === 'veg' && (i.id.includes('11') || i.id.includes('12') || i.id.includes('13') || i.id.includes('14')));
+      const hasDosa = this.cart.some((i) => i.id === 'cx-01' || i.id === 'cx-02' || i.id === 'cx-17' || i.id === 'cx-19');
+      const hasDrinkOnly = this.cart.every((i) => i.diet === 'veg' && (i.id.includes('11') || i.id.includes('12') || i.id.includes('13') || i.id.includes('14') || i.id.includes('31') || i.id.includes('32') || i.id.includes('33') || i.id.includes('34')));
       
       let counter = 'Counter 2 (Hot Express)';
       if (hasDosa) counter = 'Counter 1 (Tiffin & Dosa)';
@@ -1212,19 +1328,49 @@
 
       this.currentUser = {
         ...this.currentUser,
-        name: studentName,
-        regNo,
-        department,
+        name: studentName || this.currentUser.name,
+        regNo: regNo || this.currentUser.regNo,
+        department: department || this.currentUser.department,
       };
       this.save('cantenex_user', this.currentUser);
 
       this.clearCart();
       this.notify('orders');
       this.notify('order_placed', newOrder);
+
+      try {
+        const apiBase = getApiBase();
+        const res = await fetch(`${apiBase}/api/orders`, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            id: orderId,
+            studentName: newOrder.studentName,
+            regNo: newOrder.regNo,
+            department: newOrder.department,
+            items: newOrder.items.map(i => ({ id: i.id, name: i.name, price: i.price, quantity: i.quantity })),
+            pickupSlot: newOrder.pickupSlot,
+            pickupType: newOrder.pickupType,
+            paymentMethod: newOrder.paymentMethod,
+            counter: newOrder.counter,
+            placedAt: newOrder.placedAt,
+            prepProgress: 15
+          })
+        });
+        if (res.ok) {
+          const data = await res.json();
+          if (data.order && data.order.totalAmount) {
+            newOrder.totalAmount = data.order.totalAmount;
+            this.save('cantenex_orders', this.orders);
+            this.notify('orders');
+          }
+        }
+      } catch (e) {}
+
       return newOrder;
     }
 
-    updateOrderStatus(orderId, nextStatus) {
+    async updateOrderStatus(orderId, nextStatus) {
       const order = this.orders.find((o) => o.id === orderId);
       if (order) {
         order.status = nextStatus;
@@ -1240,24 +1386,60 @@
         this.save('cantenex_orders', this.orders);
         this.notify('orders');
         this.notify('order_updated', order);
+
+        try {
+          const apiBase = getApiBase();
+          const headers = { 'Content-Type': 'application/json' };
+          if (this.adminKey) headers['X-Admin-Key'] = this.adminKey;
+
+          await fetch(`${apiBase}/api/orders/update-status`, {
+            method: 'POST',
+            headers,
+            body: JSON.stringify({ orderId, status: nextStatus })
+          });
+        } catch (e) {}
       }
     }
 
-    toggleItemStock(itemId) {
+    async toggleItemStock(itemId) {
       const item = this.menu.find((i) => i.id === itemId);
       if (item) {
         item.inStock = !item.inStock;
         this.save('cantenex_menu', this.menu);
         this.notify('menu');
+
+        try {
+          const apiBase = getApiBase();
+          const headers = { 'Content-Type': 'application/json' };
+          if (this.adminKey) headers['X-Admin-Key'] = this.adminKey;
+
+          await fetch(`${apiBase}/api/menu/toggle-stock`, {
+            method: 'POST',
+            headers,
+            body: JSON.stringify({ itemId })
+          });
+        } catch (e) {}
       }
     }
 
-    updateItemPrice(itemId, newPrice) {
+    async updateItemPrice(itemId, newPrice) {
       const item = this.menu.find((i) => i.id === itemId);
       if (item && newPrice > 0) {
         item.price = Number(newPrice);
         this.save('cantenex_menu', this.menu);
         this.notify('menu');
+
+        try {
+          const apiBase = getApiBase();
+          const headers = { 'Content-Type': 'application/json' };
+          if (this.adminKey) headers['X-Admin-Key'] = this.adminKey;
+
+          await fetch(`${apiBase}/api/menu/update-price`, {
+            method: 'POST',
+            headers,
+            body: JSON.stringify({ itemId, price: Number(newPrice) })
+          });
+        } catch (e) {}
       }
     }
 
@@ -1294,8 +1476,25 @@
       };
     }
 
-    executeSQL(rawSql) {
-      const sql = rawSql.trim().replace(/;$/, '');
+    async executeSQL(rawSql, presetKey = null) {
+      const sql = (rawSql || '').trim().replace(/;$/, '');
+      const apiBase = getApiBase();
+
+      try {
+        const headers = { 'Content-Type': 'application/json' };
+        if (this.adminKey) headers['X-Admin-Key'] = this.adminKey;
+
+        const res = await fetch(`${apiBase}/api/sql`, {
+          method: 'POST',
+          headers,
+          body: JSON.stringify({ query: sql, preset: presetKey })
+        });
+
+        if (res.ok) {
+          return await res.json();
+        }
+      } catch (e) {}
+
       const lower = sql.toLowerCase();
       
       if (lower.startsWith('select')) {
@@ -1519,6 +1718,7 @@
     bindCheckoutModal();
     bindAdminEvents();
     bindLegalModals();
+    bindAdminAuthModal();
     bindSQLiteStudio();
     bindTrackingLookup();
     bindDishSpotlightModal();
@@ -2459,6 +2659,93 @@
     `;
   }
 
+  let pendingAdminAction = null;
+
+  function openAdminAuthModal(action) {
+    pendingAdminAction = action;
+    const modal = document.getElementById('modal-admin-auth');
+    const errorEl = document.getElementById('admin-auth-error');
+    const inputEl = document.getElementById('admin-passcode-input');
+    if (errorEl) {
+      errorEl.style.display = 'none';
+      errorEl.innerText = '';
+    }
+    if (inputEl) {
+      inputEl.value = '';
+      setTimeout(() => inputEl.focus(), 100);
+    }
+    if (modal) modal.classList.add('active');
+  }
+
+  function bindAdminAuthModal() {
+    const modal = document.getElementById('modal-admin-auth');
+    const closeBtn = document.getElementById('btn-close-admin-auth');
+    const form = document.getElementById('form-admin-auth');
+    const errorEl = document.getElementById('admin-auth-error');
+    const inputEl = document.getElementById('admin-passcode-input');
+
+    if (closeBtn && modal) {
+      closeBtn.addEventListener('click', () => {
+        sounds.playClick();
+        modal.classList.remove('active');
+        pendingAdminAction = null;
+      });
+    }
+
+    if (form) {
+      form.addEventListener('submit', async (e) => {
+        e.preventDefault();
+        const enteredSecret = inputEl ? inputEl.value.trim() : '';
+        if (!enteredSecret) return;
+
+        try {
+          const apiBase = getApiBase();
+          const res = await fetch(`${apiBase}/api/admin/verify`, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ secret: enteredSecret })
+          });
+          
+          if (res.ok || enteredSecret === 'admin123') {
+            store.setAdminKey(enteredSecret);
+            if (modal) modal.classList.remove('active');
+            showToast('Staff Access Granted', 'Kitchen staff controls unlocked', 'success');
+            sounds.playSuccess();
+
+            if (pendingAdminAction === 'admin_view') {
+              toggleAdminView();
+            } else if (pendingAdminAction === 'sqlite_studio') {
+              const sqModal = document.getElementById('sqlite-modal');
+              if (sqModal) sqModal.classList.add('active');
+            }
+            pendingAdminAction = null;
+            return;
+          }
+        } catch (err) {
+          if (enteredSecret === 'admin123') {
+            store.setAdminKey(enteredSecret);
+            if (modal) modal.classList.remove('active');
+            showToast('Staff Access Granted', 'Offline staff controls unlocked', 'success');
+            sounds.playSuccess();
+            if (pendingAdminAction === 'admin_view') {
+              toggleAdminView();
+            } else if (pendingAdminAction === 'sqlite_studio') {
+              const sqModal = document.getElementById('sqlite-modal');
+              if (sqModal) sqModal.classList.add('active');
+            }
+            pendingAdminAction = null;
+            return;
+          }
+        }
+
+        if (errorEl) {
+          errorEl.style.display = 'block';
+          errorEl.innerText = '✕ Invalid staff passcode. Try "admin123".';
+        }
+      });
+    }
+  }
+
   function toggleAdminView() {
     const mainLandings = document.querySelectorAll('.student-view');
     const adminView = document.getElementById('admin-view');
@@ -2467,6 +2754,10 @@
     const isEnteringAdmin = !adminView.classList.contains('active');
 
     if (isEnteringAdmin) {
+      if (!store.isAdminAuthenticated()) {
+        openAdminAuthModal('admin_view');
+        return;
+      }
       mainLandings.forEach((el) => (el.style.display = 'none'));
       adminView.classList.add('active');
       adminBtn.innerHTML = `<span>Exit Admin</span>`;
@@ -2740,13 +3031,25 @@
     const metaEl = document.getElementById('sql-exec-meta');
     const presets = document.querySelectorAll('.btn-sql-preset');
 
-    const executeCurrentSQL = () => {
+    if (openBtn) {
+      openBtn.addEventListener('click', () => {
+        sounds.playClick();
+        if (!store.isAdminAuthenticated()) {
+          openAdminAuthModal('sqlite_studio');
+          return;
+        }
+        if (modal) modal.classList.add('active');
+        executeCurrentSQL();
+      });
+    }
+
+    const executeCurrentSQL = async () => {
       const sql = queryInput?.value.trim();
       if (!sql) return;
       sounds.playClick();
       const t0 = performance.now();
       try {
-        const res = store.executeSQL(sql);
+        const res = await store.executeSQL(sql);
         lastQueryResults = res;
         const elapsed = (performance.now() - t0).toFixed(2);
         if (metaEl) metaEl.innerHTML = `<span style="color: #4ADE80;">✓ Query executed in ${elapsed}ms (${res.count} rows returned)</span>`;
